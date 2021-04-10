@@ -14,7 +14,7 @@ FROM alpine
 RUN adduser -S -D -H -h /app appuser
 
 USER appuser
-0
+
 COPY --from=builder /build/helloworld /app/
 
 COPY views/ /app/views
