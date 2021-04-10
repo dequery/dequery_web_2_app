@@ -1,0 +1,7 @@
+build:
+  docker:
+    web: ./web-api/Dockerfile
+
+run:
+  web: .web-api/web-api
+
