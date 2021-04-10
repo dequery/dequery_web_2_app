@@ -15,7 +15,7 @@ RUN adduser -S -D -H -h /app appuser
 
 USER appuser
 
-COPY --from=builder /build/helloworld /app/
+COPY --from=builder /build/web-api /app/
 
 COPY views/ /app/views
 
