@@ -2,7 +2,7 @@ FROM golang:1.16.3-alpine AS builder
 
 RUN mkdir /build
 
-ADD go.mod go.sum hello.go /build/
+ADD go.mod go.sum api.go /build/
 
 WORKDIR /build
 
