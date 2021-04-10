@@ -17,8 +17,6 @@ USER appuser
 
 COPY --from=builder /build/web-api /app/
 
-COPY views/ /app/views
-
 WORKDIR /app
 
 CMD ["./web-api"]
