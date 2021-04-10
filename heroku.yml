@@ -3,5 +3,5 @@ build:
     web: ./web-api/Dockerfile
 
 run:
-  web: .web-api/web-api
+  web: .web-api
 
