@@ -141,3 +141,25 @@ cython_debug/
 web-api/.elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# dependencies
+web-client/node_modules
+web-client/.pnp
+web-client/.pnp.js
+
+# testing
+web-client/coverage
+
+# production
+web-client/build
+
+# misc
+*.DS_Store
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+web-client/npm-debug.log*
+web-client/yarn-debug.log*
+web-client/yarn-error.log*
