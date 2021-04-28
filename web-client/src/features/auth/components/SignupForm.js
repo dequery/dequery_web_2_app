@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { login, selectRespError, selectUser } from 'features/auth/authSlice';
+import { signup, selectRespError, selectUser } from 'features/auth/authSlice';
 
 import TextInput from 'features/auth/components/TextInput';
 
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function LoginForm() {
+function SignupForm() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const respError = useSelector(selectRespError);
@@ -29,8 +29,8 @@ function LoginForm() {
   const classes = useStyles();
   const { handleSubmit, control } = useForm();
 
-  const onSubmitLogin = data => {
-    dispatch(login(data));
+  const onSubmitSignup = data => {
+    dispatch(signup(data));
   };
 
   if (user) {
@@ -39,7 +39,7 @@ function LoginForm() {
 
   return (
     <Container maxWidth="sm">
-      <form onSubmit={handleSubmit(onSubmitLogin)}>
+      <form onSubmit={handleSubmit(onSubmitSignup)}>
         <Grid
           alignItems="center"
           container
@@ -48,12 +48,12 @@ function LoginForm() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <Typography align="center" variant="h2">Login</Typography>
+            <Typography align="center" variant="h2">Signup</Typography>
           </Grid>
 
           {nonFieldError && (
             <Grid item xs={12}>
-                <Alert severity="error">{nonFieldError}</Alert>
+              <Alert severity="error">{nonFieldError}</Alert>
             </Grid>
           )}
 
@@ -64,6 +64,19 @@ function LoginForm() {
               inputId="displayName"
               fieldErrorMessage={respError.display_name}
               label="Display Name"
+              rules={{
+                required: 'Required'
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextInput
+              name="email"
+              control={control}
+              inputId="email"
+              fieldErrorMessage={respError.email}
+              label="Email"
               rules={{
                 required: 'Required'
               }}
@@ -86,7 +99,7 @@ function LoginForm() {
 
           <Grid item className={classes.centeredGrid} xs={12}>
             <Button variant="contained" color="primary" type="submit">
-                Login
+                Signup
             </Button>
           </Grid>
         </Grid>
@@ -95,4 +108,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default SignupForm;

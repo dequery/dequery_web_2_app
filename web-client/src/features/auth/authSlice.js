@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  errors: [],
+  respError: {},
   isFetching: false,
   user: null,
 };
 
 export const login = createAsyncThunk(
-  'auth/logIn',
+  'auth/login',
   async ({ displayName, password }, thunkAPI) => {
     try {
       const response = await fetch(
@@ -25,14 +25,45 @@ export const login = createAsyncThunk(
         }
       );
       let data = await response.json();
-      if (response.status == 200) {
+      if (response.ok) {
         return data;
       } else {
         return thunkAPI.rejectWithValue(data);
       }
     } catch (e) {
-      console.log('error', e);
       thunkAPI.rejectWithValue(e);
+    }
+  }
+);
+
+export const signup = createAsyncThunk(
+  'auth/signup',
+  async ({ displayName, email, password }, thunkAPI) => {
+    try {
+      const response = await fetch(
+        'http://localhost:8000/api/users/',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            display_name: displayName,
+            email,
+            password,
+          }),
+        }
+      );
+      let data = await response.json();
+      if (response.ok) {
+        return data;
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      console.log(e);
+      return thunkAPI.rejectWithValue(e);
     }
   }
 );
@@ -43,13 +74,14 @@ export const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = initialState.user;
+      state.respError = initialState.respError;
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
         state.isFetching = true;
-        state.errors = []
+        state.respError = initialState.respError;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isFetching = false;
@@ -57,7 +89,19 @@ export const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.isFetching = false;
-        state.errors.push(action.payload);
+        state.respError = action.payload;
+      })
+      .addCase(signup.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.user = action.payload;
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.isFetching = false;
+        state.respError = action.payload;
       })
   },
 });
@@ -65,5 +109,6 @@ export const authSlice = createSlice({
 export const { logout } = authSlice.actions;
 
 export const selectUser = (state) => state.auth.user;
+export const selectRespError = (state) => state.auth.respError;
 
 export default authSlice.reducer;
