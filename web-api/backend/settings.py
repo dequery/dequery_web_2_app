@@ -50,11 +50,11 @@ INSTALLED_APPS = [
     # django extensions
     'corsheaders',
 
-    # local
-    'backend.users',
-
     # external
     'rest_framework',
+
+    # local
+    'backend.users',
 ]
 
 MIDDLEWARE = [
@@ -102,6 +102,7 @@ DATABASES = {
         'PORT': os.environ['RDS_PORT'],
     }
 }
+
 
 # Restframework
 REST_FRAMEWORK = {
