@@ -97,6 +97,19 @@ function SignupForm() {
             />
           </Grid>
 
+          <Grid item xs={12}>
+            <TextInput
+              name="alphaPasscode"
+              control={control}
+              inputId="alphaPasscode"
+              fieldErrorMessage={respError.alpha_passcode}
+              label="Alpha Passcode"
+              rules={{
+                required: 'Required'
+              }}
+            />
+          </Grid>
+
           <Grid item className={classes.centeredGrid} xs={12}>
             <Button variant="contained" color="primary" type="submit">
                 Signup

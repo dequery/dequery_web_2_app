@@ -38,7 +38,7 @@ export const login = createAsyncThunk(
 
 export const signup = createAsyncThunk(
   'auth/signup',
-  async ({ displayName, email, password }, thunkAPI) => {
+  async ({ alphaPasscode, displayName, email, password }, thunkAPI) => {
     try {
       const response = await fetch(
         `${process.env.REACT_APP_DEQUERY_API_BASE}/api/users/`,
@@ -49,6 +49,7 @@ export const signup = createAsyncThunk(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            alpha_passcode: alphaPasscode,
             display_name: displayName,
             email,
             password,
