@@ -1,4 +1,8 @@
+import Cookies from 'js-cookie';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import dequeryClient from 'dequeryClient';
+
 
 const initialState = {
   respError: {},
@@ -8,75 +12,46 @@ const initialState = {
 
 export const login = createAsyncThunk(
   'auth/login',
-  async ({ displayName, password }, thunkAPI) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_DEQUERY_API_BASE}/api/token/`,
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            display_name: displayName,
-            password,
-          }),
-        }
-      );
-      let data = await response.json();
-      if (response.ok) {
-        return data;
-      } else {
-        return thunkAPI.rejectWithValue(data);
-      }
-    } catch (e) {
-      thunkAPI.rejectWithValue(e);
-    }
-  }
+  async ({ displayName, password }, thunkAPI) => dequeryClient(
+    '/api/token/',
+    'POST',
+    thunkAPI,
+    { display_name: displayName, password }
+  )
 );
 
 export const signup = createAsyncThunk(
   'auth/signup',
-  async ({ alphaPasscode, displayName, email, password }, thunkAPI) => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_DEQUERY_API_BASE}/api/users/`,
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            alpha_passcode: alphaPasscode,
-            display_name: displayName,
-            email,
-            password,
-          }),
-        }
-      );
-      let data = await response.json();
-      if (response.ok) {
-        return data;
-      } else {
-        return thunkAPI.rejectWithValue(data);
-      }
-    } catch (e) {
-      console.log(e);
-      return thunkAPI.rejectWithValue(e);
-    }
-  }
+  async ({ alphaPasscode, displayName, email, password }, thunkAPI) => dequeryClient(
+    '/api/users/',
+    'POST',
+    thunkAPI,
+    { alpha_passcode: alphaPasscode, display_name: displayName, email, password }
+  )
 );
+
+function setTokenCookies(payload) {
+  Cookies.set('accessToken', payload.access);
+  Cookies.set('refreshToken', payload.refresh, { expires: 7 });
+}
+
+function removeCookies() {
+  Cookies.remove('accessToken');
+  Cookies.remove('refreshToken');
+}
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
+      removeCookies();
       state.user = initialState.user;
       state.respError = initialState.respError;
-    }
+    },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -85,6 +60,7 @@ export const authSlice = createSlice({
         state.respError = initialState.respError;
       })
       .addCase(login.fulfilled, (state, action) => {
+        setTokenCookies(action.payload);
         state.isFetching = false;
         state.user = action.payload;
       })
@@ -97,6 +73,7 @@ export const authSlice = createSlice({
         state.respError = initialState.respError;
       })
       .addCase(signup.fulfilled, (state, action) => {
+        setTokenCookies(action.payload);
         state.isFetching = false;
         state.user = action.payload;
       })
@@ -107,7 +84,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setUser } = authSlice.actions;
 
 export const selectUser = (state) => state.auth.user;
 export const selectRespError = (state) => state.auth.respError;

@@ -19,3 +19,44 @@
 3) ```$ tail -n 100 -f eb-engine.log```
 4) ```$ tail -n 100 -f cfn-init.log```
 5) ```$ tail -n 100 -f cfn-init-cmd.log```
+
+
+### MVP Features
+[x] Signup
+[x] Login
+[x] Logout
+[x] Alpha Token Required
+
+-----
+[x] Create Prompt Backend
+[] Create Prompt UI
+[] View Prompts Backend
+[] View Prompts UI
+
+-----
+[] Create Answer Backend
+[] Create Answer UI
+[] Add DEQ Tokens to User Backend
+[] Add DEQ Tokens to User UI
+[] Add DEQ Bounty to Prompt Backend
+[] Add DEQ Bounty to Prompt UI
+
+------
+[] Upvote Answer (increases Prompt Bounty) Backend
+[] Upvote Answer UI
+[] Expire Prompt with Distributed Bounty
+[] Marketing About / FAQ / Whitepaper draft
+
+
+### Not in MVP
+[] Session
+[] Email confirmation of account
+[] User profile of activity
+[] Add ammend to prompt
+[] Add ammend to answer
+[] Save Prompt as draft
+[] Save Answer as draft
+[] Unit tests
+[] Remove Alpha Passcode
+
+
