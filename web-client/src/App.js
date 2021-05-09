@@ -6,10 +6,11 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import CookieLogin from 'features/auth/components/CookieLogin';
 import CreatePromptForm from 'features/prompt/components/CreatePromptForm';
-import ListPrompts from 'features/prompt/components/ListPrompts';
 import LoginForm from 'features/auth/components/LoginForm';
-import SignupForm from 'features/auth/components/SignupForm';
+import PromptDetail from 'features/prompt/components/PromptDetail';
+import PromptList from 'features/prompt/components/PromptList';
 import Profile from 'features/profile/components/Profile';
+import SignupForm from 'features/auth/components/SignupForm';
 import Topnav from 'features/topnav/components/Topnav';
 
 import Grid from '@material-ui/core/Grid';
@@ -41,8 +42,9 @@ function App() {
           <Route exact path="/login" component={LoginForm} />
           <Route exact path="/signup" component={SignupForm} />
           <Route exact path="/profile" component={Profile} />
-          <Route exact path="/prompt/create" component={CreatePromptForm} />
-          <Route exact path="/" component={ListPrompts} />
+          <Route exact path="/prompts/create" component={CreatePromptForm} />
+          <Route exact path="/prompts/:promptPk" component={PromptDetail} />
+          <Route exact path="/" component={PromptList} />
           <Redirect to="/" />
         </Switch>
       </Grid>

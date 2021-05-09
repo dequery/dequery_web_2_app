@@ -13,7 +13,7 @@ function AuthNavButton() {
 
   if (user) {
     return (
-      <PlainLink to="profile">
+      <PlainLink to="/profile">
         <AccountCircleIcon fontSize="large"/>
       </PlainLink>
     );

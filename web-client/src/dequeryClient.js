@@ -28,7 +28,7 @@ async function dequeryClient(route, method, thunkAPI, payload = {}, useJwt = fal
       'Content-Type': 'application/json',
     },
   }
-  if (payload) {
+  if (Object.keys(payload).length !== 0) {
     requestOptions.body = JSON.stringify(payload);
   }
   if (useJwt) {
@@ -40,8 +40,7 @@ async function dequeryClient(route, method, thunkAPI, payload = {}, useJwt = fal
     let data = await response.json();
     if (response.ok) {
       return data;
-    } else if (data.code == 'token_not_valid') {
-      debugger
+    } else if (data.code === 'token_not_valid') {
       const accessToken = await retrieveAccessToken();
       if (accessToken) {
         Cookies.set('accessToken', accessToken);
@@ -50,11 +49,10 @@ async function dequeryClient(route, method, thunkAPI, payload = {}, useJwt = fal
         return thunkAPI.rejectWithValue({ detail: 'Authentication expired please logout and re-login' });
       }
     } else {
-      debugger
       return data.detail ? thunkAPI.rejectWithValue(data) : thunkAPI.rejectWithValue({ deatil: JSON.stringify(data) });
     }
   } catch (e) {
-    thunkAPI.rejectWithValue({ detail: e });
+    thunkAPI.rejectWithValue({ detail: e.message });
   }
 }
 

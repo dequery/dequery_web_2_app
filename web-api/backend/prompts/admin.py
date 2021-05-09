@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from backend.prompts.models import Prompt
+
+class PromptAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Prompt, PromptAdmin)

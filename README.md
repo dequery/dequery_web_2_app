@@ -29,9 +29,20 @@
 
 -----
 [x] Create Prompt Backend
-[] Create Prompt UI
-[] View Prompts Backend
+[x] Create Prompt Frontend
+[x] Create Prompt UI
+[x] View Prompts Backend
+[x] View Prompts Frontend
 [] View Prompts UI
+[x] View Prompt Detail Backend
+[x] View Prompt Detail Frontend
+[] View Prompt Detail Backend
+
+
+------
+[] Marketing About / FAQ / Whitepaper draft
+[] deploy prod instance
+
 
 -----
 [] Create Answer Backend
@@ -45,12 +56,12 @@
 [] Upvote Answer (increases Prompt Bounty) Backend
 [] Upvote Answer UI
 [] Expire Prompt with Distributed Bounty
-[] Marketing About / FAQ / Whitepaper draft
 
 
 ### Not in MVP
-[] Session
+[x] Session
 [] Email confirmation of account
+[] Add Tags
 [] User profile of activity
 [] Add ammend to prompt
 [] Add ammend to answer
@@ -59,4 +70,6 @@
 [] Unit tests
 [] Remove Alpha Passcode
 
-
+### Bugs to Fix
+[] No error is shown if prompt title is too long
+[] Pagination of DRF is only 15 for prompt list

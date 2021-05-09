@@ -28,10 +28,11 @@ function TextInput(props) {
         render={({ field: { onChange, value }, fieldState: { error } }) =>
           <TextField
             id={props.inputId}
+            InputLabelProps={props.InputLabelProps}
             error={hasError(error)}
             helperText={errorMessage(error)}
             fullWidth={true}
-            variant="filled"
+            variant="outlined"
             value={value}
             onChange={onChange}
             label={props.label}

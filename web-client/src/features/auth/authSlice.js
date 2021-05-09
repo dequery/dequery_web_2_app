@@ -86,6 +86,7 @@ export const authSlice = createSlice({
 
 export const { logout, setUser } = authSlice.actions;
 
+export const selectIsFetching = (state) => state.auth.isFetching;
 export const selectUser = (state) => state.auth.user;
 export const selectRespError = (state) => state.auth.respError;
 
