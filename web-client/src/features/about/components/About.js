@@ -34,7 +34,7 @@ function About() {
           <Card style={{minHeight: '330px'}}>
             <CardContent>
               <Typography variant="h4">
-                1. Spend DEQ to put a bounty on your questions
+                1. Spend DEQ to put a bounty on your questions.
               </Typography>
             </CardContent>
           </Card>
@@ -43,7 +43,7 @@ function About() {
           <Card style={{minHeight: '330px'}}>
             <CardContent>
               <Typography variant="h4">
-                2. Earn DEQ by asking popular questions or providing upvoted answers
+                2. Earn DEQ by asking popular questions or providing upvoted answers.
               </Typography>
             </CardContent>
           </Card>
@@ -52,7 +52,7 @@ function About() {
           <Card style={{minHeight: '330px'}}>
             <CardContent>
               <Typography variant="h4">
-                3. Trade, Sell, or Buy DEQ anywhere in the Blockchain Universe that interacts with ERC-20 tokens
+                3. Trade, Sell, or Buy DEQ anywhere in the Blockchain Universe that interacts with ERC-20 tokens.
               </Typography>
             </CardContent>
           </Card>
