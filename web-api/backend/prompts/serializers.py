@@ -8,7 +8,7 @@ class PromptCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
+        fields = ['bounty', 'content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
         read_only_fields = ['created', 'pk', 'user']
 
 
@@ -17,8 +17,8 @@ class PromptDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
-        read_only_fields = ['content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
+        fields = ['bounty', 'content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
+        read_only_fields = ['bounty', 'content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
 
 
 class PromptListSerializer(serializers.ModelSerializer):
@@ -26,5 +26,5 @@ class PromptListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['created', 'expiration_datetime', 'pk', 'user', 'title']
-        read_only_fields = ['created', 'expiration_datetime', 'pk', 'user', 'title']
+        fields = ['bounty', 'created', 'expiration_datetime', 'pk', 'user', 'title']
+        read_only_fields = ['bounty', 'created', 'expiration_datetime', 'pk', 'user', 'title']

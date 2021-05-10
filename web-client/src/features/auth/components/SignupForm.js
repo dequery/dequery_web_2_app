@@ -10,6 +10,8 @@ import TextInput from 'features/auth/components/TextInput';
 
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography';
@@ -39,84 +41,88 @@ function SignupForm() {
 
   return (
     <Container maxWidth="sm">
-      <form onSubmit={handleSubmit(onSubmitSignup)}>
-        <Grid
-          alignItems="center"
-          container
-          direction="row"
-          justify="center"
-          spacing={3}
-        >
-          <Grid item xs={12}>
-            <Typography align="center" variant="h2">Signup</Typography>
-          </Grid>
+      <Card>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmitSignup)}>
+            <Grid
+              alignItems="center"
+              container
+              direction="row"
+              justify="center"
+              spacing={3}
+            >
+              <Grid item xs={12}>
+                <Typography align="center" variant="h3">Signup</Typography>
+              </Grid>
 
-          {nonFieldError && (
-            <Grid item xs={12}>
-              <Alert severity="error">{nonFieldError}</Alert>
+              {nonFieldError && (
+                <Grid item xs={12}>
+                  <Alert severity="error">{nonFieldError}</Alert>
+                </Grid>
+              )}
+
+              <Grid item xs={12}>
+                <TextInput
+                  name="displayName"
+                  control={control}
+                  inputId="displayName"
+                  fieldErrorMessage={respError.display_name}
+                  label="Display Name"
+                  rules={{
+                    required: 'Required'
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  name="email"
+                  control={control}
+                  inputId="email"
+                  fieldErrorMessage={respError.email}
+                  label="Email"
+                  rules={{
+                    required: 'Required'
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  name="password"
+                  control={control}
+                  inputId="password"
+                  fieldErrorMessage={respError.password}
+                  label="Password"
+                  rules={{
+                    required: 'Required'
+                  }}
+                  type="password"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  name="alphaPasscode"
+                  control={control}
+                  inputId="alphaPasscode"
+                  fieldErrorMessage={respError.alpha_passcode}
+                  label="Alpha Passcode"
+                  rules={{
+                    required: 'Required'
+                  }}
+                />
+              </Grid>
+
+              <Grid item className={classes.centeredGrid} xs={12}>
+                <Button variant="contained" color="primary" type="submit">
+                    Signup
+                </Button>
+              </Grid>
             </Grid>
-          )}
-
-          <Grid item xs={12}>
-            <TextInput
-              name="displayName"
-              control={control}
-              inputId="displayName"
-              fieldErrorMessage={respError.display_name}
-              label="Display Name"
-              rules={{
-                required: 'Required'
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextInput
-              name="email"
-              control={control}
-              inputId="email"
-              fieldErrorMessage={respError.email}
-              label="Email"
-              rules={{
-                required: 'Required'
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextInput
-              name="password"
-              control={control}
-              inputId="password"
-              fieldErrorMessage={respError.password}
-              label="Password"
-              rules={{
-                required: 'Required'
-              }}
-              type="password"
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextInput
-              name="alphaPasscode"
-              control={control}
-              inputId="alphaPasscode"
-              fieldErrorMessage={respError.alpha_passcode}
-              label="Alpha Passcode"
-              rules={{
-                required: 'Required'
-              }}
-            />
-          </Grid>
-
-          <Grid item className={classes.centeredGrid} xs={12}>
-            <Button variant="contained" color="primary" type="submit">
-                Signup
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+          </form>
+        </CardContent>
+      </Card>
     </Container>
   );
 }

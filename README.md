@@ -33,35 +33,43 @@
 [x] Create Prompt UI
 [x] View Prompts Backend
 [x] View Prompts Frontend
-[] View Prompts UI
+[x] View Prompts UI
 [x] View Prompt Detail Backend
 [x] View Prompt Detail Frontend
-[] View Prompt Detail Backend
+[x] View Prompt Detail Backend
 
 
 ------
-[] Marketing About / FAQ / Whitepaper draft
+[x] Add DEQ Bounty to Prompt Backend
+[x] Add DEQ Bounty to Prompt Frontend
+[x] Marketing About
+[] deploy dev instance
 [] deploy prod instance
-
+[] Alias Users
+[] Demo Questions with bounties
+[] Fivver Logo
 
 -----
+[] Add DEQ Bounty to Prompt UI
+[] Add DEQ Tokens to User Backend
+[] Add DEQ Tokens to User Frontend
+[] Add DEQ Tokens to User UI
 [] Create Answer Backend
 [] Create Answer UI
-[] Add DEQ Tokens to User Backend
-[] Add DEQ Tokens to User UI
-[] Add DEQ Bounty to Prompt Backend
-[] Add DEQ Bounty to Prompt UI
 
 ------
 [] Upvote Answer (increases Prompt Bounty) Backend
 [] Upvote Answer UI
 [] Expire Prompt with Distributed Bounty
+[] Marketing FAQ
+[] Marketing Whitepaper
 
 
 ### Not in MVP
 [x] Session
 [] Email confirmation of account
 [] Add Tags
+[] Filter or Sort prompts
 [] User profile of activity
 [] Add ammend to prompt
 [] Add ammend to answer
@@ -73,3 +81,4 @@
 ### Bugs to Fix
 [] No error is shown if prompt title is too long
 [] Pagination of DRF is only 15 for prompt list
+[] Switch to Accordian View [https://material-ui.com/components/accordion/]

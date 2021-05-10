@@ -15,6 +15,9 @@ function PromptCard(props) {
     <Card>
       <PlainLink to={`/prompts/${prompt.pk}`}>
         <CardContent>
+          <Typography variant="caption" gutterBottom>
+            {prompt.bounty} DEQ
+          </Typography>
           <Typography color="textSecondary" gutterBottom>
             {prompt.user}
           </Typography>

@@ -8,6 +8,7 @@ class PromptManager(models.Manager):
 
 
 class Prompt(models.Model):
+    bounty = models.IntegerField(default=0)
     content = models.JSONField()
     created = models.DateTimeField(auto_now_add=True)
     expiration_datetime = models.DateTimeField()

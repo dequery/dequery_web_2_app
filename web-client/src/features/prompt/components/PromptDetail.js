@@ -52,6 +52,9 @@ function PromptDetail(props) {
         <Grid item xs={12}>
           <Card>
             <CardContent>
+              <Typography variant="caption" gutterBottom>
+                {prompt.bounty} DEQ
+              </Typography>
               <Typography color="textSecondary" gutterBottom>
                 {prompt.user}
               </Typography>
