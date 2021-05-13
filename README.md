@@ -3,7 +3,8 @@
 ## Deploy
 ### Backend
 1) ```$ cd web-api/```
-2) ```$ eb deploy```
+2a) ```$ eb deploy``` dev
+2b_ ```$eb deploy dequery``` prod
 
 ### Frontend
 1) ```$ cd web-client/```
@@ -19,6 +20,8 @@
 3) ```$ tail -n 100 -f eb-engine.log```
 4) ```$ tail -n 100 -f cfn-init.log```
 5) ```$ tail -n 100 -f cfn-init-cmd.log```
+
+### Create Admin User SSH
 
 
 ### MVP Features
@@ -43,21 +46,21 @@
 [x] Add DEQ Bounty to Prompt Backend
 [x] Add DEQ Bounty to Prompt Frontend
 [x] Marketing About
-[] deploy dev instance
-[] deploy prod instance
-[] Alias Users
-[] Demo Questions with bounties
-[] Fivver Logo
+[x] deploy dev instance
+[x] deploy prod instance
+[x] Fivver Logo
 
 -----
-[] Add DEQ Bounty to Prompt UI
-[] Add DEQ Tokens to User Backend
-[] Add DEQ Tokens to User Frontend
-[] Add DEQ Tokens to User UI
-[] Create Answer Backend
-[] Create Answer UI
+[x] Add DEQ Tokens to User Backend
+[x] Add DEQ Tokens to User Frontend
+[x] Add DEQ Tokens to User UI
+[x] Create Answer Backend
+[x] Create Answer UI
 
 ------
+[] Create Prompt costs 10 DEQ
+[] Create Answer costs 1 DEQ
+[] Add DEQ Bounty to Prompt UI
 [] Upvote Answer (increases Prompt Bounty) Backend
 [] Upvote Answer UI
 [] Expire Prompt with Distributed Bounty
@@ -82,3 +85,6 @@
 [] No error is shown if prompt title is too long
 [] Pagination of DRF is only 15 for prompt list
 [] Switch to Accordian View [https://material-ui.com/components/accordion/]
+[] Double check error handling on form submissions
+[] Double check Asnc buttons disable while fetching
+[] test auth/tokens on app render logout if needed

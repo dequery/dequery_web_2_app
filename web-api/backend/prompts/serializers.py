@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from backend.answers.serializers import AnswerListRetrieveSerializer
 from backend.prompts.models import Prompt
 
 
@@ -14,10 +15,11 @@ class PromptCreateSerializer(serializers.ModelSerializer):
 
 class PromptDetailSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    answers = AnswerListRetrieveSerializer(many=True)
 
     class Meta:
         model = Prompt
-        fields = ['bounty', 'content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
+        fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
         read_only_fields = ['bounty', 'content', 'created', 'expiration_datetime', 'pk', 'user', 'title']
 
 

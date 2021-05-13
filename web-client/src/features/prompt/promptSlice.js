@@ -10,6 +10,17 @@ const initialState = {
   promptList: { results: [] },
 }
 
+export const createAnswer = createAsyncThunk(
+  'prompt/submitAnswer',
+  async ({ content, prompt }, thunkAPI) => dequeryClient(
+    '/api/answers/create/',
+    'POST',
+    thunkAPI,
+    { content, prompt },
+    true
+  )
+);
+
 export const createPrompt = createAsyncThunk(
   'prompt/submitPrompt',
   async ({ content, expirationDatetime, title }, thunkAPI) => dequeryClient(
@@ -55,6 +66,18 @@ export const promptSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(createAnswer.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(createAnswer.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.promptDetail.answers.unshift(action.payload);
+      })
+      .addCase(createAnswer.rejected, (state, action) => {
+        state.isFetching = false;
+        state.respError = action.payload;
+      })
       .addCase(createPrompt.pending, (state) => {
         state.isFetching = true;
         state.respError = initialState.respError;

@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 
 import { clearPromptCreated, clearPromptDetail, retrievePrompt, selectIsFetching, selectPromptDetail } from 'features/prompt/promptSlice';
 
+import AnswerAccordion from 'features/prompt/components/AnswerAccordion';
+import AnswerCard from 'features/prompt/components/AnswerCard';
 import PromptDetailContent from 'features/prompt/components/PromptDetailContent';
 
 import Container from '@material-ui/core/Container';
@@ -67,7 +69,15 @@ function PromptDetail(props) {
               </Typography>
             </CardContent>
           </Card>
+          <AnswerAccordion promptPk={prompt.pk} />
         </Grid>
+        {prompt.answers.map((answer, i) => {
+          return (
+            <Grid key={i} item xs={12}>
+              <AnswerCard answer={answer} />
+            </Grid>
+          );
+        })}
       </Grid>
     </Container>
   )

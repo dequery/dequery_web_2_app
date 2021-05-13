@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # local
+    'backend.answers',
     'backend.users',
     'backend.prompts',
 ]
