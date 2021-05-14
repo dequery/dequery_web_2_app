@@ -49,7 +49,7 @@ async function dequeryClient(route, method, thunkAPI, payload = {}, useJwt = fal
         return thunkAPI.rejectWithValue({ detail: 'Authentication expired please logout and re-login' });
       }
     } else {
-      return data.detail ? thunkAPI.rejectWithValue(data) : thunkAPI.rejectWithValue({ deatil: JSON.stringify(data) });
+      return data.detail ? thunkAPI.rejectWithValue(data) : thunkAPI.rejectWithValue({ detail: JSON.stringify(data) });
     }
   } catch (e) {
     thunkAPI.rejectWithValue({ detail: e.message });

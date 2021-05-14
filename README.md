@@ -58,6 +58,7 @@
 [x] Create Answer UI
 
 ------
+[] test auth/tokens on app render logout if needed
 [] Create Prompt costs 10 DEQ
 [] Create Answer costs 1 DEQ
 [] Add DEQ Bounty to Prompt UI
@@ -87,4 +88,3 @@
 [] Switch to Accordian View [https://material-ui.com/components/accordion/]
 [] Double check error handling on form submissions
 [] Double check Asnc buttons disable while fetching
-[] test auth/tokens on app render logout if needed
