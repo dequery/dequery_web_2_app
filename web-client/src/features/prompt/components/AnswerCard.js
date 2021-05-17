@@ -33,7 +33,7 @@ function AnswerCard(props) {
         </Typography>
         <AnswerDetailContent content={answer.content} />
         <Typography className={classes.topMargin} variant="body2" component="p">
-          {`Created ${moment(prompt.expiration_datetime).fromNow()}`}
+          {`Created ${moment(answer.created).fromNow()}`}
         </Typography>
       </CardContent>
     </Card>

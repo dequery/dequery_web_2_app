@@ -6,6 +6,7 @@ https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#a-full-example
 from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
 
+
 class UserManager(BaseUserManager):
     def create_user(self, display_name, email, password=None):
         if not email:
@@ -32,6 +33,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    created = models.DateTimeField(auto_now_add=True)
     display_name = models.CharField(max_length=20, unique=True)
     email = models.EmailField(
         verbose_name='email address',
@@ -65,3 +67,19 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+class AlphaRequestManager(models.Manager):
+    pass
+
+
+class AlphaRequest(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    text = models.CharField(max_length=640)
+    email = models.EmailField(
+        verbose_name='email address',
+        max_length=255,
+        unique=True,
+    )
+
+    objects = AlphaRequestManager()

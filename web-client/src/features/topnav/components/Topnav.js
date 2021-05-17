@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  plainAnchor: {
+    color: 'inherit',
+    textDecoration: 'none',
+  }
 }));
 
 
@@ -54,6 +58,7 @@ function Topnav() {
         >
           <PlainLink to="/"><MenuItem onClick={handleClose}>Home</MenuItem></PlainLink>
           <PlainLink to="/about"><MenuItem onClick={handleClose}>About</MenuItem></PlainLink>
+          <MenuItem><a className={classes.plainAnchor} href="https://docs.google.com/document/d/1VsMbWJxPcDNJFNSEdHfKyL9v8WREks9d5t0Ot_7maPs/edit">Whitepaper</a></MenuItem>
           <PlainLink to="/profile"><MenuItem onClick={handleClose}>Profile</MenuItem></PlainLink>
         </Menu>
         <Typography variant="h6" className={classes.title}>

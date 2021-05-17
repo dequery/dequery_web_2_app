@@ -40,6 +40,7 @@
 [x] View Prompt Detail Backend
 [x] View Prompt Detail Frontend
 [x] View Prompt Detail Backend
+[x] Session
 
 
 ------
@@ -58,6 +59,13 @@
 [x] Create Answer UI
 
 ------
+[x] answer with another account
+[x] request alpha
+[x] Marketing Whitepaper
+
+### Not in MVP
+[] Marketing FAQ
+[] Make pretty
 [] test auth/tokens on app render logout if needed
 [] Create Prompt costs 10 DEQ
 [] Create Answer costs 1 DEQ
@@ -65,12 +73,8 @@
 [] Upvote Answer (increases Prompt Bounty) Backend
 [] Upvote Answer UI
 [] Expire Prompt with Distributed Bounty
-[] Marketing FAQ
-[] Marketing Whitepaper
 
 
-### Not in MVP
-[x] Session
 [] Email confirmation of account
 [] Add Tags
 [] Filter or Sort prompts
@@ -83,7 +87,9 @@
 [] Remove Alpha Passcode
 
 ### Bugs to Fix
-[] No error is shown if prompt title is too long
+[x] fix refresh not loading app
+[x] No error is shown if prompt title is too long
+[] fix field erros showing up as dict general errors
 [] Pagination of DRF is only 15 for prompt list
 [] Switch to Accordian View [https://material-ui.com/components/accordion/]
 [] Double check error handling on form submissions

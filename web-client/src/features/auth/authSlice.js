@@ -5,10 +5,21 @@ import dequeryClient from 'dequeryClient';
 
 
 const initialState = {
+  alphaRequestSuccess: false,
   respError: {},
   isFetching: false,
   user: null,
 };
+
+export const submitAlphaRequest = createAsyncThunk(
+  'auth/alpharequest',
+  async ({ email, text }, thunkAPI) => dequeryClient(
+    '/api/alpharequests/',
+    'POST',
+    thunkAPI,
+    { email, text }
+  )
+);
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -55,6 +66,18 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(submitAlphaRequest.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(submitAlphaRequest.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.alphaRequestSuccess = true;
+      })
+      .addCase(submitAlphaRequest.rejected, (state, action) => {
+        state.isFetching = false;
+        state.respError = action.payload;
+      })
       .addCase(login.pending, (state) => {
         state.isFetching = true;
         state.respError = initialState.respError;
@@ -86,6 +109,7 @@ export const authSlice = createSlice({
 
 export const { logout, setUser } = authSlice.actions;
 
+export const selectAlphaRequestSuccess = (state) => state.auth.alphaRequestSuccess;
 export const selectIsFetching = (state) => state.auth.isFetching;
 export const selectUser = (state) => state.auth.user;
 export const selectRespError = (state) => state.auth.respError;

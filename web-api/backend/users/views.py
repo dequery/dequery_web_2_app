@@ -2,10 +2,18 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from rest_framework import generics, mixins, permissions, viewsets
 from rest_framework.response import Response
-from backend.users.serializers import UserCreateSerializer, UserDetailSerializer
+
+from backend.users.serializers import AlphaRequestSerializer, UserCreateSerializer, UserDetailSerializer
+from backend.users.models import AlphaRequest
 
 
 User = get_user_model()
+
+
+class AlphaRequestCreate(generics.CreateAPIView):
+    queryset = AlphaRequest.objects.all()
+    serializer_class = AlphaRequestSerializer
+    permission_classes = [permissions.AllowAny]
 
 
 class UserCreate(mixins.CreateModelMixin, generics.GenericAPIView):

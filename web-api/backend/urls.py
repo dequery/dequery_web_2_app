@@ -6,13 +6,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from backend.answers.views import AnswerCreate, AnswerDetail, AnswerList
 from backend.prompts.views import PromptCreate, PromptDetail, PromptList
-from backend.users.views import UserCreate, UserDetail
+from backend.users.views import AlphaRequestCreate, UserCreate, UserDetail
 
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/alpharequests/', AlphaRequestCreate.as_view(), name='alpha_request_create'),
     path('api/answers/', AnswerList.as_view(), name='answer_list'),
     path('api/answers/<int:pk>/', AnswerList.as_view(), name='answer_detail'),
     path('api/answers/create/', AnswerCreate.as_view(), name='answer_create'),

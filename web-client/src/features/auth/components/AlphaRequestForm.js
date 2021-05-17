@@ -4,9 +4,8 @@ import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { signup, selectIsFetching, selectRespError, selectUser } from 'features/auth/authSlice';
+import { submitAlphaRequest, selectIsFetching, selectRespError, selectAlphaRequestSuccess } from 'features/auth/authSlice';
 
-import PlainLink from 'features/topnav/components/PlainLink';
 import TextInput from 'features/auth/components/TextInput';
 
 import Alert from '@material-ui/lab/Alert';
@@ -24,20 +23,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function SignupForm() {
+function AlphaRequestForm() {
   const dispatch = useDispatch();
+  const alphaRequestSuccess = useSelector(selectAlphaRequestSuccess);
   const isFetching = useSelector(selectIsFetching);
-  const user = useSelector(selectUser);
   const respError = useSelector(selectRespError);
   const nonFieldError = respError.detail;
   const classes = useStyles();
   const { handleSubmit, control } = useForm();
 
-  const onSubmitSignup = data => {
-    dispatch(signup(data));
+  const onSubmitAlphaRequest = data => {
+    dispatch(submitAlphaRequest(data));
   };
 
-  if (user) {
+  if (alphaRequestSuccess) {
     return <Redirect to="/" />;
   }
 
@@ -45,7 +44,7 @@ function SignupForm() {
     <Container maxWidth="sm">
       <Card>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmitSignup)}>
+          <form onSubmit={handleSubmit(onSubmitAlphaRequest)}>
             <Grid
               alignItems="center"
               container
@@ -54,13 +53,7 @@ function SignupForm() {
               spacing={3}
             >
               <Grid item xs={12}>
-                <Typography align="center" variant="h3">Signup</Typography>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography align="center" variant="body1">
-                  <PlainLink to="/alpharequest">Request Alpha Passcode</PlainLink>
-                </Typography>
+                <Typography align="center" variant="h3">Request Alpha Access</Typography>
               </Grid>
 
               {nonFieldError && (
@@ -68,19 +61,6 @@ function SignupForm() {
                   <Alert severity="error">{nonFieldError}</Alert>
                 </Grid>
               )}
-
-              <Grid item xs={12}>
-                <TextInput
-                  name="displayName"
-                  control={control}
-                  inputId="displayName"
-                  fieldErrorMessage={respError.display_name}
-                  label="Display Name"
-                  rules={{
-                    required: 'Required'
-                  }}
-                />
-              </Grid>
 
               <Grid item xs={12}>
                 <TextInput
@@ -97,25 +77,11 @@ function SignupForm() {
 
               <Grid item xs={12}>
                 <TextInput
-                  name="password"
+                  name="text"
                   control={control}
-                  inputId="password"
-                  fieldErrorMessage={respError.password}
-                  label="Password"
-                  rules={{
-                    required: 'Required'
-                  }}
-                  type="password"
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextInput
-                  name="alphaPasscode"
-                  control={control}
-                  inputId="alphaPasscode"
-                  fieldErrorMessage={respError.alpha_passcode}
-                  label="Alpha Passcode"
+                  inputId="text"
+                  fieldErrorMessage={respError.text}
+                  label="Message (640 char max)"
                   rules={{
                     required: 'Required'
                   }}
@@ -124,7 +90,7 @@ function SignupForm() {
 
               <Grid item className={classes.centeredGrid} xs={12}>
                 <Button disabled={isFetching} variant="contained" color="primary" type="submit">
-                    Signup
+                    Request
                 </Button>
               </Grid>
             </Grid>
@@ -135,4 +101,4 @@ function SignupForm() {
   );
 }
 
-export default SignupForm;
+export default AlphaRequestForm;
