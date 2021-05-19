@@ -28,15 +28,18 @@ const useStyles = makeStyles((theme) => ({
 function PromptDetail(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { promptPk } = useParams();
+  const { promptId } = useParams();
   const prompt = useSelector(selectPromptDetail);
   const isFetching = useSelector(selectIsFetching);
 
   useEffect(() => {
     dispatch(clearPromptCreated());
-    dispatch(retrievePrompt(promptPk));
+    dispatch(retrievePrompt(promptId));
     return () => dispatch(clearPromptDetail());
-  }, [dispatch, promptPk]);
+  }, [dispatch, promptId]);
+  console.log(promptId);
+  console.log(prompt);
+  console.log(isFetching);
 
   if (isFetching || Object.keys(prompt).length === 0) {
     return <LinearProgress />;
@@ -69,7 +72,7 @@ function PromptDetail(props) {
               </Typography>
             </CardContent>
           </Card>
-          <AnswerAccordion promptPk={prompt.pk} />
+          <AnswerAccordion promptId={prompt.id} />
         </Grid>
         {prompt.answers.map((answer, i) => {
           return (

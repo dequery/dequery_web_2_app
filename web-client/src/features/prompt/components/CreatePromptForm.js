@@ -41,8 +41,8 @@ function CreatePromptForm() {
     dispatch(createPrompt(data));
   };
 
-  if (promptCreated.pk) {
-    return <Redirect to={`/prompts/${promptCreated.pk}`} />;
+  if (promptCreated.id) {
+    return <Redirect to={`/prompts/${promptCreated.id}`} />;
   }
 
   return (
@@ -95,6 +95,20 @@ function CreatePromptForm() {
                     required: 'Required'
                   }}
                   type="datetime-local"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  name="bounty"
+                  control={control}
+                  inputId="bounty"
+                  fieldErrorMessage={respError.bounty}
+                  label="bounty"
+                  type="number"
+                  rules={{
+                    required: 'Required'
+                  }}
                 />
               </Grid>
 

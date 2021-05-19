@@ -1,6 +1,8 @@
 from django.db import models
 
 from backend.users.models import User
+from backend.transactions.constants import TRANSACTION_CATEGORY_CHOICES
+from backend.transactions.models import DeqTransaction
 
 
 class PromptManager(models.Manager):
@@ -8,7 +10,6 @@ class PromptManager(models.Manager):
 
 
 class Prompt(models.Model):
-    bounty = models.IntegerField(default=0)
     content = models.JSONField()
     created = models.DateTimeField(auto_now_add=True)
     expiration_datetime = models.DateTimeField()
@@ -16,3 +17,13 @@ class Prompt(models.Model):
     user = models.ForeignKey(User, related_name='prompts', on_delete=models.CASCADE)
 
     objects = PromptManager()
+
+    @property
+    def bounty(self):
+        bounty = 0
+        deq_transactions = DeqTransaction.objects.filter(
+            category=TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY,
+            other_pk=self.id)
+        for deq_transaction in deq_transactions:
+            bounty += deq_transaction.amount
+        return bounty

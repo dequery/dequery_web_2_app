@@ -23,11 +23,11 @@ export const createAnswer = createAsyncThunk(
 
 export const createPrompt = createAsyncThunk(
   'prompt/submitPrompt',
-  async ({ content, expirationDatetime, title }, thunkAPI) => dequeryClient(
+  async ({ bounty, content, expirationDatetime, title }, thunkAPI) => dequeryClient(
     '/api/prompts/create/',
     'POST',
     thunkAPI,
-    { content, expiration_datetime: expirationDatetime, title },
+    { bounty, content, expiration_datetime: expirationDatetime, title },
     true
   )
 );
@@ -43,8 +43,8 @@ export const listPrompts = createAsyncThunk(
 
 export const retrievePrompt = createAsyncThunk(
   'prompt/retrievePrompt',
-  async (promptPk, thunkAPI) => dequeryClient(
-    `/api/prompts/${promptPk}`,
+  async (promptId, thunkAPI) => dequeryClient(
+    `/api/prompts/${promptId}`,
     'GET',
     thunkAPI,
   )

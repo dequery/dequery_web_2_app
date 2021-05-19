@@ -62,19 +62,23 @@
 [x] answer with another account
 [x] request alpha
 [x] Marketing Whitepaper
+[x] Create Prompt costs 10 DEQ and user must have enough DEQ
+[x] Create Answer costs 1 DEQ
+[x] Add DEQ Bounty to Prompt UI
+[] Upvote Answer (increases Prompt Bounty) Backend
+[] Upvote Answer UI
+[] Expire Prompt with Distributed Bounty
+
+[] Announce in Bankless shill your project
+[] Invite James to ask a question
+[] Invite Douglas to ask a question
+
+
 
 ### Not in MVP
 [] Marketing FAQ
 [] Make pretty
 [] test auth/tokens on app render logout if needed
-[] Create Prompt costs 10 DEQ
-[] Create Answer costs 1 DEQ
-[] Add DEQ Bounty to Prompt UI
-[] Upvote Answer (increases Prompt Bounty) Backend
-[] Upvote Answer UI
-[] Expire Prompt with Distributed Bounty
-
-
 [] Email confirmation of account
 [] Add Tags
 [] Filter or Sort prompts

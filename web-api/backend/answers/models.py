@@ -13,6 +13,12 @@ class Answer(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     prompt = models.ForeignKey(Prompt, related_name='answers', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='answers', on_delete=models.CASCADE)
-    votes = models.IntegerField(default=0)
 
     objects = AnswerManager()
+
+    @property
+    def votes(self):
+        total = 0
+        for vote_cast in self.vote_casts.all():
+            total += vote_cast.amount
+        return total

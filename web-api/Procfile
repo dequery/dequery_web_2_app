@@ -1,0 +1,5 @@
+web: gunicorn --bind :8000 backend.settings.wsgi:application
+
+celery_worker: celery worker -A backend --loglevel=INFO
+
+celery_beat: celery beat -A backend --loglevel=INFO

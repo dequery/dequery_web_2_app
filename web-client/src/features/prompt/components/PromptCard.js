@@ -13,7 +13,7 @@ function PromptCard(props) {
 
   return (
     <Card>
-      <PlainLink to={`/prompts/${prompt.pk}`}>
+      <PlainLink to={`/prompts/${prompt.id}`}>
         <CardContent>
           <Typography variant="caption" gutterBottom>
             {prompt.bounty} DEQ

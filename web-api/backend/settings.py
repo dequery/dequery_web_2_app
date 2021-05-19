@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # django extensions
+    'django_celery_results',
+    'django_celery_beat',
     'corsheaders',
 
     # external
@@ -55,8 +57,10 @@ INSTALLED_APPS = [
 
     # local
     'backend.answers',
-    'backend.users',
     'backend.prompts',
+    'backend.transactions',
+    'backend.users',
+    'backend.votes',
 ]
 
 MIDDLEWARE = [
@@ -109,7 +113,7 @@ DATABASES = {
 # Restframework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 20,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -190,3 +194,12 @@ STATIC_ROOT = 'static'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = 'sqs://'
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'queue_name_prefix': os.environ['SQS_QUEUE_PREFIX'],
+    'region': 'us-east-1',
+    }
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

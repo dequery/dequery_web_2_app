@@ -6,6 +6,8 @@ https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#a-full-example
 from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
 
+from backend.transactions.constants import SPENDING_CATEGORIES
+
 
 class UserManager(BaseUserManager):
     def create_user(self, display_name, email, password=None):
@@ -42,7 +44,6 @@ class User(AbstractBaseUser):
     )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    deq_balance = models.IntegerField(default=0)
 
     objects = UserManager()
 
@@ -51,6 +52,16 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.display_name
+
+    @property
+    def deq_balance(self):
+        balance = 0
+        for deq_transaction in self.deq_transactions.all():
+            if deq_transaction.category in SPENDING_CATEGORIES:
+                balance -= deq_transaction.amount
+            else:
+                balance += deq_transaction.amount
+        return balance
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"

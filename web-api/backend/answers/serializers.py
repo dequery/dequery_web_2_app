@@ -8,8 +8,13 @@ class AnswerCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ['content', 'created', 'prompt', 'pk', 'user', 'votes']
-        read_only_fields = ['created', 'pk', 'user', 'votes']
+        fields = '__all__'
+        read_only_fields = ['created', 'id', 'user']
+
+    def validate(self, validated_data):
+        if validated_data['user'].deq_balance < 1:
+            raise serializers.ValidationError('1 DEQ is required to submit an answer')
+        return validated_data
 
 
 class AnswerListRetrieveSerializer(serializers.ModelSerializer):
@@ -17,5 +22,5 @@ class AnswerListRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ['content', 'created', 'prompt', 'pk', 'user', 'votes']
-        read_only_fields = ['content', 'created', 'prompt', 'pk', 'user', 'votes']
+        fields = ['content', 'created', 'prompt', 'id', 'user', 'votes']
+        read_only_fields = ['content', 'created', 'prompt', 'id', 'user', 'votes']
