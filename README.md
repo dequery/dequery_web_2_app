@@ -16,10 +16,12 @@
 
 ### Debugging
 1) ```$ eb ssh```
-2) ```$ cd ../../var/log```
-3) ```$ tail -n 100 -f eb-engine.log```
-4) ```$ tail -n 100 -f cfn-init.log```
-5) ```$ tail -n 100 -f cfn-init-cmd.log```
+3) ```$ tail -n 100 -f /var/log/eb-engine.log```
+4) ```$ tail -n 100 -f /var/log/cfn-init.log```
+5) ```$ tail -n 100 -f /var/log/cfn-init-cmd.log```
+6) ```source /var/app/venv/*/bin/activate```
+7) ```cd ..```
+8) ````cd /var/app/current/```
 
 ### Create Admin User SSH
 
@@ -63,8 +65,8 @@
 [x] request alpha
 [x] Marketing Whitepaper
 [x] Create Prompt costs 10 DEQ and user must have enough DEQ
-[x] Create Answer costs 1 DEQ
 [x] Add DEQ Bounty to Prompt UI
+
 [] Upvote Answer (increases Prompt Bounty) Backend
 [] Upvote Answer UI
 [] Expire Prompt with Distributed Bounty
