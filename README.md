@@ -67,8 +67,8 @@
 [x] Create Prompt costs 10 DEQ and user must have enough DEQ
 [x] Add DEQ Bounty to Prompt UI
 
-[] Spend Upvotes on Answer
-[] Upvote Answer UI
+[x] Spend Upvotes on Answer
+[x] Upvote Answer UI
 [] Expire Prompt with Distributed Bounty
 
 [] Announce in Bankless shill your project
@@ -80,7 +80,7 @@
 ### Not in MVP
 [] Marketing FAQ
 [] Make pretty
-[] test auth/tokens on app render logout if needed
+[x] test auth/tokens on app render logout if needed
 [] Email confirmation of account
 [] Add Tags
 [] Filter or Sort prompts

@@ -11,11 +11,6 @@ class AnswerCreateSerializer(serializers.ModelSerializer):
         fields = ['created', 'content', 'pk', 'prompt', 'user']
         read_only_fields = ['created', 'pk', 'user']
 
-    def validate(self, validated_data):
-        if validated_data['user'].deq_balance < 1:
-            raise serializers.ValidationError('1 DEQ is required to submit an answer')
-        return validated_data
-
 
 class AnswerListRetrieveSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()

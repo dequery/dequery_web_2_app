@@ -5,6 +5,7 @@ TRANSACTION_CATEGORY_CHOICES = Choices(
     ('from_answer', 'FROM_ANSWER', 'From upvoted answer'),
     ('from_prompt_added_bounty', 'FROM_PROMPT_ADDED_BOUNTY', 'From added bounty'),
     ('from_source', 'FROM_SOURCE', 'From source database'),  # money printer go BRRR
+    ('from_expired_prompt', 'FROM_EXPIRED_PROMPT', 'Prompt expired with no answers'),
     ('to_prompt_bounty', 'TO_PROMPT_BOUNTY', 'To create a prompt bounty'),
 )
 
