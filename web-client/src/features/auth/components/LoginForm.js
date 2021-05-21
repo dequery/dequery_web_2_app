@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { login, selectIsFetching, selectRespError, selectUser } from 'features/auth/authSlice';
+import { login, selectIsFetching, selectRespError, selectUser, selectUserCreated } from 'features/auth/authSlice';
 
+import CookieLogin from 'features/auth/components/CookieLogin';
 import TextInput from 'features/auth/components/TextInput';
 
 import Alert from '@material-ui/lab/Alert';
@@ -27,6 +28,7 @@ function LoginForm() {
   const dispatch = useDispatch();
   const isFetching = useSelector(selectIsFetching);
   const user = useSelector(selectUser);
+  const userCreated = useSelector(selectUserCreated);
   const respError = useSelector(selectRespError);
   const nonFieldError = respError.detail;
   const classes = useStyles();
@@ -36,12 +38,13 @@ function LoginForm() {
     dispatch(login(data));
   };
 
-  if (user) {
+  if (user.pk) {
     return <Redirect to="/" />;
   }
 
   return (
     <Container maxWidth="sm">
+      <CookieLogin />
       <Card>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmitLogin)}>
@@ -55,6 +58,10 @@ function LoginForm() {
               <Grid item xs={12}>
                 <Typography align="center" variant="h3">Login</Typography>
               </Grid>
+
+              {userCreated && <Grid item xs={12}>
+                <Typography align="center" variant="body1">Your account was created, please login</Typography>
+              </Grid>}
 
               {nonFieldError && (
                 <Grid item xs={12}>

@@ -20,7 +20,7 @@ function VoteBalance(props) {
     return () => dispatch(clearVoteBalanceList());
   }, [dispatch, voteCastCreated]);
 
-  if (user) {
+  if (user.pk) {
     return (
       <Typography align="right" variant="caption" gutterBottom>
         {voteBalanceTotal} available vote tokens for this question

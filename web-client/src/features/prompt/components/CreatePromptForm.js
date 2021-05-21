@@ -41,8 +41,8 @@ function CreatePromptForm() {
     dispatch(createPrompt(data));
   };
 
-  if (promptCreated.id) {
-    return <Redirect to={`/prompts/${promptCreated.id}`} />;
+  if (promptCreated.pk) {
+    return <Redirect to={`/prompts/${promptCreated.pk}`} />;
   }
 
   return (
@@ -50,7 +50,7 @@ function CreatePromptForm() {
       <AuthRedirect />
       <Card>
         <CardContent>
-          <form onSubmit={handleSubmit( (data) => onSubmitCreate(data, editorState))}>
+          <form onSubmit={handleSubmit((data) => onSubmitCreate(data, editorState))}>
             <Grid
               alignItems="center"
               container

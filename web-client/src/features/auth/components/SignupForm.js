@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { signup, selectIsFetching, selectRespError, selectUser } from 'features/auth/authSlice';
+import { signup, selectIsFetching, selectRespError, selectUser, selectUserCreated } from 'features/auth/authSlice';
 
 import PlainLink from 'features/topnav/components/PlainLink';
 import TextInput from 'features/auth/components/TextInput';
@@ -28,6 +28,7 @@ function SignupForm() {
   const dispatch = useDispatch();
   const isFetching = useSelector(selectIsFetching);
   const user = useSelector(selectUser);
+  const userCreated = useSelector(selectUserCreated);
   const respError = useSelector(selectRespError);
   const nonFieldError = respError.detail;
   const classes = useStyles();
@@ -37,9 +38,14 @@ function SignupForm() {
     dispatch(signup(data));
   };
 
-  if (user) {
+  if (user.pk) {
     return <Redirect to="/" />;
   }
+
+  if (userCreated) {
+    return <Redirect to="/login" />;
+  }
+
 
   return (
     <Container maxWidth="sm">

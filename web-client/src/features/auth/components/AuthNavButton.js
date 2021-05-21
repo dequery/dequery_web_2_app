@@ -3,21 +3,30 @@ import { useSelector } from 'react-redux';
 
 import { selectUser } from 'features/auth/authSlice';
 
+import PlainLink from 'features/topnav/components/PlainLink';
+
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Button from '@material-ui/core/Button';
-import PlainLink from 'features/topnav/components/PlainLink';
+import Typography from '@material-ui/core/Typography';
 
 
 function AuthNavButton() {
   const user = useSelector(selectUser);
 
-  if (user) {
+  if (user.pk) {
     return (
-      <PlainLink to="/profile">
-        <AccountCircleIcon fontSize="large"/>
-      </PlainLink>
+      <>
+        <Typography>
+          DEQ Balance {user.deq_balance}
+        </Typography>
+
+        <PlainLink to="/profile">
+          <AccountCircleIcon fontSize="large"/>
+        </PlainLink>
+      </>
     );
   }
+
   return (
     <>
       <PlainLink to="/signup">

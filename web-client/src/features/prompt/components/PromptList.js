@@ -33,13 +33,13 @@ function PromptList() {
       >
         <Grid item xs={12}>
           <PlainLink to='/prompts/create'>
-            <Button disabled={!user} variant="contained" color="primary">Create Prompt</Button>
+            <Button disabled={Object.keys(user).length === 0} variant="contained" color="primary">Create Prompt</Button>
           </PlainLink>
         </Grid>
         {promptList.results.map((prompt, i) => {
           return (
             <Grid key={i} item xs={12}>
-              <PromptCard  prompt={prompt} />
+              <PromptCard prompt={prompt} />
             </Grid>
           );
         })}

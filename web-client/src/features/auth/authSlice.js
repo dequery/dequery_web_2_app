@@ -8,7 +8,8 @@ const initialState = {
   alphaRequestSuccess: false,
   respError: {},
   isFetching: false,
-  user: null,
+  user: {},
+  userCreated: false,
 };
 
 export const submitAlphaRequest = createAsyncThunk(
@@ -41,6 +42,17 @@ export const signup = createAsyncThunk(
   )
 );
 
+export const retrieveUser = createAsyncThunk(
+  'auth/retrieveUser',
+  async (_, thunkAPI) => dequeryClient(
+    '/api/users/retrieve/',
+    'GET',
+    thunkAPI,
+    {},
+    true,
+  )
+);
+
 function setTokenCookies(payload) {
   Cookies.set('accessToken', payload.access);
   Cookies.set('refreshToken', payload.refresh, { expires: 7 });
@@ -59,9 +71,7 @@ export const authSlice = createSlice({
       removeCookies();
       state.user = initialState.user;
       state.respError = initialState.respError;
-    },
-    setUser: (state, action) => {
-      state.user = action.payload;
+      state.user = initialState.user;
     },
   },
   extraReducers: (builder) => {
@@ -85,9 +95,21 @@ export const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         setTokenCookies(action.payload);
         state.isFetching = false;
-        state.user = action.payload;
+        state.userCreated = false;
       })
       .addCase(login.rejected, (state, action) => {
+        state.isFetching = false;
+        state.respError = action.payload;
+      })
+      .addCase(retrieveUser.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(retrieveUser.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.user = action.payload;
+      })
+      .addCase(retrieveUser.rejected, (state, action) => {
         state.isFetching = false;
         state.respError = action.payload;
       })
@@ -96,9 +118,8 @@ export const authSlice = createSlice({
         state.respError = initialState.respError;
       })
       .addCase(signup.fulfilled, (state, action) => {
-        setTokenCookies(action.payload);
         state.isFetching = false;
-        state.user = action.payload;
+        state.userCreated = true;
       })
       .addCase(signup.rejected, (state, action) => {
         state.isFetching = false;
@@ -107,11 +128,12 @@ export const authSlice = createSlice({
   },
 });
 
-export const { logout, setUser } = authSlice.actions;
+export const { logout } = authSlice.actions;
 
 export const selectAlphaRequestSuccess = (state) => state.auth.alphaRequestSuccess;
 export const selectIsFetching = (state) => state.auth.isFetching;
 export const selectUser = (state) => state.auth.user;
+export const selectUserCreated = (state) => state.auth.userCreated;
 export const selectRespError = (state) => state.auth.respError;
 
 export default authSlice.reducer;
