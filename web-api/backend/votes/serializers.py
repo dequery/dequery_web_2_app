@@ -1,13 +1,22 @@
 from rest_framework import serializers
 
-from backend.votes.models import VoteCast
+from backend.votes.models import VoteBalance, VoteCast
+
+
+class VoteBalanceDetailSerializer(serializers.ModelSerializer):
+    remaining_amount = serializers.IntegerField()
+
+    class Meta:
+        model = VoteBalance
+        fields = ['amount', 'created', 'pk', 'prompt', 'remaining_amount', 'user']
+        read_only_fields = ['amount', 'created', 'pk', 'prompt', 'remaining_amount', 'user']
 
 
 class VoteCastCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = VoteCast
-        fields = '__all__'
-        read_only_fields = ['created', 'id']
+        fields = ['amount', 'answer', 'pk', 'vote_balance']
+        read_only_fields = ['created', 'pk']
 
     def validate_amount(self, value):
         if value <= 0:
@@ -20,6 +29,10 @@ class VoteCastCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Not enough Votes')
 
         prompt = validated_data['vote_balance'].prompt
-        if not prompt.answers.all(id=validated_data['answer'].id).exists():
+        if not prompt.answers.filter(pk=validated_data['answer'].pk).exists():
             raise serializers.ValidationError('Answer and vote token do not match')
+
+        user = validated_data['vote_balance'].user
+        if user.pk != self.context['request'].user.pk:
+            raise serializers.ValidationError('User permission error')
         return validated_data

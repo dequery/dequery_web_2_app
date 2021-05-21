@@ -23,7 +23,7 @@ class Prompt(models.Model):
         bounty = 0
         deq_transactions = DeqTransaction.objects.filter(
             category=TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY,
-            other_pk=self.id)
+            other_pk=self.pk)
         for deq_transaction in deq_transactions:
             bounty += deq_transaction.amount
         return bounty

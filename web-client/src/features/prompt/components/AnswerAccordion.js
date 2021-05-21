@@ -31,11 +31,11 @@ function AnswerAccordion(props) {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const { promptId } = props;
+  const { promptPk } = props;
 
   const onSubmitCreate = () => {
     const content = convertToRaw(editorState.getCurrentContent());
-    dispatch(createAnswer({ content, prompt: promptId }));
+    dispatch(createAnswer({ content, prompt: promptPk }));
   }
 
   return (

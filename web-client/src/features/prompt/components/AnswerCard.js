@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { useParams } from 'react-router-dom';
 
 import AnswerDetailContent from 'features/prompt/components/AnswerDetailContent';
+import VoteCastForm from 'features/vote/components/VoteCastForm';
 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -28,6 +27,7 @@ function AnswerCard(props) {
         <Typography variant="caption" gutterBottom>
           {answer.votes} Votes
         </Typography>
+        <VoteCastForm answer={answer} />
         <Typography color="textSecondary" gutterBottom>
           {answer.user}
         </Typography>

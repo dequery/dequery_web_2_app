@@ -46,7 +46,7 @@ function App() {
           <Route exact path="/login" component={LoginForm} />
           <Route exact path="/profile" component={Profile} />
           <Route exact path="/prompts/create" component={CreatePromptForm} />
-          <Route exact path="/prompts/:promptId" component={PromptDetail} />
+          <Route exact path="/prompts/:promptPk" component={PromptDetail} />
           <Route exact path="/signup" component={SignupForm} />
           <Route exact path="/" component={PromptList} />
           <Redirect to="/" />

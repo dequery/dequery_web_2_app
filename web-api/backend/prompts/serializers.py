@@ -13,8 +13,8 @@ class PromptCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = '__all__'
-        read_only_fields = ['created', 'id', 'user']
+        fields = ['bounty', 'content', 'created', 'expiration_datetime', 'pk', 'title', 'user']
+        read_only_fields = ['bounty', 'created', 'pk', 'user']
 
     def create(self, validated_data):
         bounty = validated_data.pop('bounty')
@@ -24,7 +24,7 @@ class PromptCreateSerializer(serializers.ModelSerializer):
             amount=bounty,
             category=TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY,
             user=validated_data['user'],
-            other_pk=prompt.id,
+            other_pk=prompt.pk,
         )
         deq_transaction.save()
         vote_balance = VoteBalance.objects.create(
@@ -55,7 +55,8 @@ class PromptDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = '__all__'
+        fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'pk', 'title', 'user']
+        read_only_fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'pk', 'title', 'user']
 
 
 class PromptListSerializer(serializers.ModelSerializer):
@@ -64,4 +65,5 @@ class PromptListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        exclude = ['content']
+        fields = ['bounty', 'created', 'expiration_datetime', 'pk', 'title', 'user']
+        read_only_fields = ['bounty', 'created', 'expiration_datetime', 'pk', 'title', 'user']

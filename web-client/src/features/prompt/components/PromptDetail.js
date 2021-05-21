@@ -4,11 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useParams } from 'react-router-dom';
 
+import { selectVoteCastCreated } from 'features/vote/voteSlice';
 import { clearPromptCreated, clearPromptDetail, retrievePrompt, selectIsFetching, selectPromptDetail } from 'features/prompt/promptSlice';
 
 import AnswerAccordion from 'features/prompt/components/AnswerAccordion';
 import AnswerCard from 'features/prompt/components/AnswerCard';
 import PromptDetailContent from 'features/prompt/components/PromptDetailContent';
+import VoteBalanceDisplay from 'features/vote/components/VoteBalanceDisplay';
 
 import Container from '@material-ui/core/Container';
 import Card from '@material-ui/core/Card';
@@ -28,18 +30,16 @@ const useStyles = makeStyles((theme) => ({
 function PromptDetail(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { promptId } = useParams();
+  const { promptPk } = useParams();
   const prompt = useSelector(selectPromptDetail);
   const isFetching = useSelector(selectIsFetching);
+  const voteCastCreated = useSelector(selectVoteCastCreated);
 
   useEffect(() => {
     dispatch(clearPromptCreated());
-    dispatch(retrievePrompt(promptId));
+    dispatch(retrievePrompt(promptPk));
     return () => dispatch(clearPromptDetail());
-  }, [dispatch, promptId]);
-  console.log(promptId);
-  console.log(prompt);
-  console.log(isFetching);
+  }, [dispatch, promptPk, voteCastCreated]);
 
   if (isFetching || Object.keys(prompt).length === 0) {
     return <LinearProgress />;
@@ -57,9 +57,16 @@ function PromptDetail(props) {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="caption" gutterBottom>
-                {prompt.bounty} DEQ
-              </Typography>
+              <Grid container alignItems="center" justify="space-between">
+                <Grid item xs={6}>
+                  <Typography display="inline" variant="caption" gutterBottom>
+                    {prompt.bounty} DEQ
+                  </Typography>
+                </Grid>
+                <Grid item style={{textAlign: 'right'}} xs={6}>
+                  <VoteBalanceDisplay prompt={prompt} />
+                </Grid>
+              </Grid>
               <Typography color="textSecondary" gutterBottom>
                 {prompt.user}
               </Typography>
@@ -72,7 +79,7 @@ function PromptDetail(props) {
               </Typography>
             </CardContent>
           </Card>
-          <AnswerAccordion promptId={prompt.id} />
+          <AnswerAccordion promptPk={prompt.pk} />
         </Grid>
         {prompt.answers.map((answer, i) => {
           return (
@@ -83,7 +90,7 @@ function PromptDetail(props) {
         })}
       </Grid>
     </Container>
-  )
+  );
 }
 
 export default PromptDetail;

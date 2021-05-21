@@ -67,7 +67,7 @@
 [x] Create Prompt costs 10 DEQ and user must have enough DEQ
 [x] Add DEQ Bounty to Prompt UI
 
-[] Upvote Answer (increases Prompt Bounty) Backend
+[] Spend Upvotes on Answer
 [] Upvote Answer UI
 [] Expire Prompt with Distributed Bounty
 

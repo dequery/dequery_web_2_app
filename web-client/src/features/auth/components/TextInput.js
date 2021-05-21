@@ -30,6 +30,7 @@ function TextInput(props) {
             id={props.inputId}
             InputLabelProps={props.InputLabelProps}
             error={hasError(error)}
+            disabled={props.disabled}
             helperText={errorMessage(error)}
             fullWidth={true}
             variant="outlined"

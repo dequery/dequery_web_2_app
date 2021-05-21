@@ -8,8 +8,8 @@ class AnswerCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = '__all__'
-        read_only_fields = ['created', 'id', 'user']
+        fields = ['created', 'content', 'pk', 'prompt', 'user']
+        read_only_fields = ['created', 'pk', 'user']
 
     def validate(self, validated_data):
         if validated_data['user'].deq_balance < 1:
@@ -22,5 +22,5 @@ class AnswerListRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ['content', 'created', 'prompt', 'id', 'user', 'votes']
-        read_only_fields = ['content', 'created', 'prompt', 'id', 'user', 'votes']
+        fields = ['content', 'created', 'prompt', 'pk', 'user', 'votes']
+        read_only_fields = ['content', 'created', 'prompt', 'pk', 'user', 'votes']

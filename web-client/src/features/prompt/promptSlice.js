@@ -43,8 +43,8 @@ export const listPrompts = createAsyncThunk(
 
 export const retrievePrompt = createAsyncThunk(
   'prompt/retrievePrompt',
-  async (promptId, thunkAPI) => dequeryClient(
-    `/api/prompts/${promptId}`,
+  async (promptPk, thunkAPI) => dequeryClient(
+    `/api/prompts/${promptPk}`,
     'GET',
     thunkAPI,
   )
