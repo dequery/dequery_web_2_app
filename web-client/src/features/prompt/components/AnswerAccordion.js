@@ -31,15 +31,17 @@ function AnswerAccordion(props) {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const { promptPk } = props;
+  const { prompt } = props;
+  console.log(prompt.status)
+  const disabled = Boolean((user == null) || (prompt.status !== 'active'));
 
   const onSubmitCreate = () => {
     const content = convertToRaw(editorState.getCurrentContent());
-    dispatch(createAnswer({ content, prompt: promptPk }));
+    dispatch(createAnswer({ content, prompt: prompt.pk }));
   }
 
   return (
-      <Accordion disabled={user === null} style={{flex: true, flexGrow: 1}}>
+      <Accordion disabled={disabled} style={{flex: true, flexGrow: 1}}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
         >

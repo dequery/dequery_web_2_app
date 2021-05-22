@@ -11,6 +11,7 @@ import AuthRedirect from 'features/auth/components/AuthRedirect';
 import PromptEditor from 'features/prompt/components/PromptEditor';
 import TextInput from 'features/auth/components/TextInput';
 
+import { DateTimePicker } from "@material-ui/pickers";
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -35,9 +36,11 @@ function CreatePromptForm() {
   const nonFieldError = respError.detail;
   const { handleSubmit, control } = useForm();
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [expirationDatetime, handleDateChange] = useState(null);
 
   const onSubmitCreate = (data, editorState) => {
     data.content = convertToRaw(editorState.getCurrentContent());
+    data.expirationDatetime = expirationDatetime;
     dispatch(createPrompt(data));
   };
 
@@ -82,19 +85,13 @@ function CreatePromptForm() {
               </Grid>
 
               <Grid item xs={12}>
-                <TextInput
-                  name="expirationDatetime"
-                  control={control}
-                  inputId="expirationDatetime"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  fieldErrorMessage={respError.expiration_datetime}
+                <DateTimePicker
                   label="Expiration Datetime"
-                  rules={{
-                    required: 'Required'
-                  }}
-                  type="datetime-local"
+                  inputVariant="outlined"
+                  value={expirationDatetime}
+                  onChange={handleDateChange}
+                  fullWidth={true}
+                  disablePast={true}
                 />
               </Grid>
 

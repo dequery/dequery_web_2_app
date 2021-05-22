@@ -1,5 +1,6 @@
 import datetime
 import pdb
+from django.utils import timezone
 
 from django.utils.timezone import make_aware
 
@@ -8,6 +9,7 @@ from rest_framework.test import APIClient
 
 from backend.users.factories import UserFactory
 from backend.prompts.factories import PromptFactory, TEST_CONTENT
+from backend.prompts.constants import PROMPT_STATUS_CHOICES
 from backend.prompts.models import Prompt
 from backend.transactions.factories import DeqTransactionFactory
 # from backend.votes.factories import VoteBalanceFactory
@@ -31,12 +33,14 @@ class PromptTests(TestCase):
         }, format='json')
         return response
 
-    def _api_create_prompt(self, user, bounty):
+    def _api_create_prompt(self, user, bounty, expiration_datetime=None):
+        if not expiration_datetime:
+            expiration_datetime = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
         client.force_authenticate(user=user)
         response = client.post('/api/prompts/create/', {
             'bounty': bounty,
             'content': TEST_CONTENT,
-            'expiration_datetime': (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S"),
+            'expiration_datetime': expiration_datetime,
             'title': 'test',
             'user': user.pk,
         }, format='json')
@@ -112,6 +116,28 @@ class PromptTests(TestCase):
         self.assertEqual(600, user4.deq_balance)
         self.assertEqual(400, user5.deq_balance)
         self.assertEqual(0, user6.deq_balance)
+
+    def test_distribute_bounties(self):
+        user = UserFactory(display_name='pirate', email='pirate@bay.com')
+        DeqTransactionFactory(user=user, amount=400)
+        expired_time_1 = (timezone.now() + timezone.timedelta(days=-1)).strftime("%Y-%m-%d %H:%M:%S")
+        prompt1_pk = self._api_create_prompt(user, 100, expired_time_1).data['pk']
+        expired_time_2 = (timezone.now() + timezone.timedelta(minutes=-1)).strftime("%Y-%m-%d %H:%M:%S")
+        prompt2_pk = self._api_create_prompt(user, 100, expired_time_2).data['pk']
+        nonexpired_time_1 = (timezone.now() + timezone.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+        prompt3_pk = self._api_create_prompt(user, 100, nonexpired_time_1).data['pk']
+        nonexpired_time_2 = (timezone.now() + timezone.timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M:%S")
+        prompt4_pk = self._api_create_prompt(user, 100, nonexpired_time_2).data['pk']
+        promt5_pk = PromptFactory(user=self.user, status='closing')
+        Prompt.distribute_bounties()
+        active_prompts = Prompt.objects.filter(status=PROMPT_STATUS_CHOICES.ACTIVE)
+        expected_active_prompt_pks = [prompt3_pk, prompt4_pk]
+        expected_closed_prompt_pks = [prompt1_pk, prompt2_pk, promt5_pk]
+        for prompt in active_prompts:
+            self.assertTrue(prompt.pk not in expected_closed_prompt_pks)
+        closed_prompts = Prompt.objects.filter(status=PROMPT_STATUS_CHOICES.CLOSED)
+        for prompt in closed_prompts:
+            self.assertTrue(prompt.pk not in expected_active_prompt_pks)
 
     def test_req_fact(self):
         client.force_authenticate(user=self.user)

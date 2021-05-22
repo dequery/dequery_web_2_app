@@ -43,7 +43,7 @@ function PromptDetail(props) {
 
   if (isFetching || Object.keys(prompt).length === 0) {
     return <LinearProgress />;
-  } 
+  }
 
   return (
     <Container maxWidth="md">
@@ -79,7 +79,7 @@ function PromptDetail(props) {
               </Typography>
             </CardContent>
           </Card>
-          <AnswerAccordion promptPk={prompt.pk} />
+          <AnswerAccordion prompt={prompt} />
         </Grid>
         {prompt.answers.map((answer, i) => {
           return (

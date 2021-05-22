@@ -18,6 +18,6 @@ class PromptDetail(generics.RetrieveAPIView):
 
 
 class PromptList(generics.ListAPIView):
-    queryset = Prompt.objects.all()
+    queryset = Prompt.objects.all().order_by('status', 'expiration_datetime')
     serializer_class = PromptListSerializer
     permission_classes = [AllowAny]

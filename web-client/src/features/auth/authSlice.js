@@ -110,6 +110,7 @@ export const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(retrieveUser.rejected, (state, action) => {
+        removeCookies();
         state.isFetching = false;
         state.respError = action.payload;
       })

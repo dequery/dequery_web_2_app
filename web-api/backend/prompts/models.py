@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from backend.users.models import User
 from backend.transactions.constants import TRANSACTION_CATEGORY_CHOICES
@@ -19,6 +20,15 @@ class Prompt(models.Model):
     status = models.CharField(max_length=64, choices=PROMPT_STATUS_CHOICES, default=PROMPT_STATUS_CHOICES.ACTIVE)
 
     objects = PromptManager()
+
+    @classmethod
+    def distribute_bounties(cls):
+        cls.objects.filter(status=PROMPT_STATUS_CHOICES.ACTIVE, expiration_datetime__lte=timezone.now()).update(status=PROMPT_STATUS_CHOICES.CLOSING)
+        prompts = cls.objects.filter(status=PROMPT_STATUS_CHOICES.CLOSING)
+        for prompt in prompts:
+            prompt.distribute()
+            prompt.status = PROMPT_STATUS_CHOICES.CLOSED
+            prompt.save(update_fields=['status'])
 
     @property
     def bounty(self):
