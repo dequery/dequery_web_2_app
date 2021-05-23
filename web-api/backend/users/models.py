@@ -79,6 +79,11 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    def reset_password(self, new_password):
+        self.set_password(new_password)
+        self.save()
+        return self
+
 
 class AlphaRequestManager(models.Manager):
     pass
@@ -94,3 +99,29 @@ class AlphaRequest(models.Model):
     )
 
     objects = AlphaRequestManager()
+
+
+class AlphaCodeManager(models.Manager):
+    pass
+
+
+class AlphaCode(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    code = models.CharField(max_length=12, db_index=True, unique=True)
+    used = models.BooleanField(default=False)
+
+    objects = AlphaCodeManager()
+
+
+class ResetPasswordCodeManager(models.Manager):
+    pass
+
+
+class ResetPasswordCode(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    code = models.CharField(max_length=12, db_index=True, unique=True)
+    expiration_datetime = models.DateTimeField()
+    user = models.ForeignKey(User, related_name='reset_password_codes', on_delete=models.CASCADE)
+    used = models.BooleanField(default=False)
+
+    objects = ResetPasswordCodeManager()

@@ -14,6 +14,7 @@ import LoginForm from 'features/auth/components/LoginForm';
 import PromptDetail from 'features/prompt/components/PromptDetail';
 import PromptList from 'features/prompt/components/PromptList';
 import Profile from 'features/profile/components/Profile';
+import ResetPasswordForm from 'features/auth/components/ResetPasswordForm';
 import SignupForm from 'features/auth/components/SignupForm';
 import Topnav from 'features/topnav/components/Topnav';
 
@@ -50,6 +51,7 @@ function App() {
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/prompts/create" component={CreatePromptForm} />
             <Route exact path="/prompts/:promptPk" component={PromptDetail} />
+            <Route exact path="/reset-password/:resetPasswordCode" component={ResetPasswordForm} />
             <Route exact path="/signup" component={SignupForm} />
             <Route exact path="/" component={PromptList} />
             <Redirect to="/" />

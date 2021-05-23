@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from backend.answers.views import AnswerCreate, AnswerDetail, AnswerList
 from backend.prompts.views import PromptCreate, PromptDetail, PromptList
-from backend.users.views import AlphaRequestCreate, UserCreate, UserDetail, RetrieveUserFromToken
+from backend.users.views import AlphaRequestCreate, UserCreate, UserDetail, RetrieveUserFromToken, ResetPassword
 from backend.votes.views import VoteBalanceDetail, VoteBalanceList, VoteCastCreate
 
 router = routers.DefaultRouter()
@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/users/create/', UserCreate.as_view(), name='user_create'),
     path('api/users/retrieve/', RetrieveUserFromToken.as_view(), name='user_retrieve_from_token'),
+    path('api/users/reset-password/', ResetPassword.as_view(), name='user_reset_password'),
     path('api/users/<int:pk>/', UserDetail.as_view(), name='user_detail'),
     path('api/vote-casts/create/', VoteCastCreate.as_view(), name='vote_cast_create'),
     path('api/vote-balances/', VoteBalanceList.as_view(), name='vote_balance_list'),

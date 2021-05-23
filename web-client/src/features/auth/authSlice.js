@@ -10,6 +10,7 @@ const initialState = {
   isFetching: false,
   user: {},
   userCreated: false,
+  resetPasswordSuccess: false,
 };
 
 export const submitAlphaRequest = createAsyncThunk(
@@ -39,6 +40,16 @@ export const signup = createAsyncThunk(
     'POST',
     thunkAPI,
     { alpha_passcode: alphaPasscode, display_name: displayName, email, password }
+  )
+);
+
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async ({ newPassword, resetPasswordCode }, thunkAPI) => dequeryClient(
+    '/api/users/reset-password/',
+    'POST',
+    thunkAPI,
+    { new_password: newPassword, reset_password_code: resetPasswordCode }
   )
 );
 
@@ -114,6 +125,18 @@ export const authSlice = createSlice({
         state.isFetching = false;
         state.respError = action.payload;
       })
+      .addCase(resetPassword.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.resetPasswordSuccess = true;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.isFetching = false;
+        state.respError = action.payload;
+      })
       .addCase(signup.pending, (state) => {
         state.isFetching = true;
         state.respError = initialState.respError;
@@ -136,5 +159,6 @@ export const selectIsFetching = (state) => state.auth.isFetching;
 export const selectUser = (state) => state.auth.user;
 export const selectUserCreated = (state) => state.auth.userCreated;
 export const selectRespError = (state) => state.auth.respError;
+export const selectResetPasswordSuccess = (state) => state.auth.resetPasswordSuccess
 
 export default authSlice.reducer;
