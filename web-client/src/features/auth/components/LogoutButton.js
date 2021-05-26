@@ -10,7 +10,7 @@ function LogoutButton() {
   const dispatch = useDispatch();
 
   return (
-    <Button onClick={() => dispatch(logout())}>
+    <Button variant="contained" color="primary" onClick={() => dispatch(logout())}>
       Logout
     </Button>
   );

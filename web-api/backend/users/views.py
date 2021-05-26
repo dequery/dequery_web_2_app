@@ -71,4 +71,6 @@ class ResetPassword(views.APIView):
             reset_password_code.user.reset_password(new_password)
         except:
             return Response({'detail': 'Error resetting password'})
+        reset_password_code.used = True
+        reset_password_code.save(update_fields=['used'])
         return Response({'detail': 'Password reset'}, status=200)

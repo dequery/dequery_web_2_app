@@ -7,7 +7,7 @@ import { selectUser } from 'features/auth/authSlice';
 function AuthRedirect() {
   const user = useSelector(selectUser);
 
-  if (!user) {
+  if (Object.keys(user).length === 0) {
     return <Redirect to="/login" />;
   }
   return <div/>;
