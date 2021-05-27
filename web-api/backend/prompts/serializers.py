@@ -24,7 +24,7 @@ class PromptCreateSerializer(serializers.ModelSerializer):
             amount=bounty,
             category=TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY,
             user=validated_data['user'],
-            other_pk=prompt.pk,
+            extra_info={'prompt': prompt.pk}
         )
         deq_transaction.save()
         vote_balance = VoteBalance.objects.create(

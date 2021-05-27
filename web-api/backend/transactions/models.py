@@ -12,8 +12,8 @@ class DeqTransaction(models.Model):
     amount = models.DecimalField(default=0.000000000000000000, max_digits=29, decimal_places=18)
     created = models.DateTimeField(auto_now_add=True)
     category = models.CharField(max_length=64, choices=TRANSACTION_CATEGORY_CHOICES)
+    extra_info = models.JSONField(default=dict)
     user = models.ForeignKey(User, related_name='deq_transactions', on_delete=models.PROTECT)
-    other_pk = models.IntegerField(null=True)  # FK to model relation which changes based on transaction category
     status = models.CharField(max_length=64, choices=TRANSACTION_STATUS_CHOICES, default=TRANSACTION_STATUS_CHOICES.FULFILLED)
 
     objects = DeqTransactionManager()

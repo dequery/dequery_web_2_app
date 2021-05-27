@@ -11,4 +11,3 @@ class DeqTransactionFactory(factory.django.DjangoModelFactory):
     amount = 100
     category = TRANSACTION_CATEGORY_CHOICES.FROM_SOURCE
     user = 0
-    other_pk = 0

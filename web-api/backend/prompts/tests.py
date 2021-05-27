@@ -1,18 +1,18 @@
 import datetime
-import pdb
+from decimal import *
+
 from django.utils import timezone
-
 from django.utils.timezone import make_aware
-
 from django.test import TestCase
 from rest_framework.test import APIClient
 
+from backend.answers.models import Answer
 from backend.users.factories import UserFactory
 from backend.prompts.factories import PromptFactory, TEST_CONTENT
 from backend.prompts.constants import PROMPT_STATUS_CHOICES
 from backend.prompts.models import Prompt
+from backend.transactions.models import DeqTransaction
 from backend.transactions.factories import DeqTransactionFactory
-# from backend.votes.factories import VoteBalanceFactory
 from backend.transactions.constants import TRANSACTION_CATEGORY_CHOICES
 
 
@@ -68,7 +68,10 @@ class PromptTests(TestCase):
             if answer_data['votes'] > 0:
                 response = self._api_create_vote_cast(user, answer_data['votes'], answer_pk, prompt_pk)
                 self.assertEqual(201, response.status_code)
-        return Prompt.objects.get(pk=prompt_pk)
+        prompt = Prompt.objects.get(pk=prompt_pk)
+        prompt.status = PROMPT_STATUS_CHOICES.CLOSING
+        prompt.save(update_fields=['status'])
+        return prompt
 
     def test_user_matches(self):
         self.assertEqual(self.user.pk, self.prompt.user.pk)
@@ -139,14 +142,49 @@ class PromptTests(TestCase):
         for prompt in closed_prompts:
             self.assertTrue(prompt.pk not in expected_active_prompt_pks)
 
-    def test_req_fact(self):
-        client.force_authenticate(user=self.user)
-        DeqTransactionFactory(user=self.user, amount=100)
-        response = client.post('/api/prompts/create/', {
-            'bounty': 50,
-            'content': TEST_CONTENT,
-            'expiration_datetime': (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S"),
-            'title': 'test',
-            'user': self.user.pk,
-        }, format='json')
+    def test_prompt_create(self):
+        # it failes if the user does not have enough DEQ
+        user = UserFactory(display_name='maker', email='maker@maker.eth')
+        response = self._api_create_prompt(user, 500)
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('Not enough DEQ to pay for bounty', response.json()['non_field_errors'][0])
+
+        # it works when user has enough bounty
+        DeqTransactionFactory(user=user, amount=500)
+        response = self._api_create_prompt(user, 500)
         self.assertEqual(201, response.status_code)
+        resp_data = response.json()
+        self.assertEqual(resp_data['bounty'], 500)
+        prompt = Prompt.objects.get(pk=resp_data['pk'])
+        self.assertEqual(Decimal('500.000000000000000000'), prompt.bounty)
+        self.assertEqual(user.pk, prompt.user.pk)
+        vote_balances = list(prompt.user.vote_balances.filter(prompt=prompt.pk))
+        self.assertEqual(1, len(vote_balances))
+        vote_balance = vote_balances[0]
+        self.assertEqual(500, vote_balance.amount)
+        self.assertEqual(user.pk, vote_balance.user.pk)
+        self.assertEqual(0, self.user.deq_balance)
+        deq_transactions = list(DeqTransaction.objects.filter(category=TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY, user=user))
+        self.assertEqual(1, len(deq_transactions))
+        deq_transaction = deq_transactions[0]
+        self.assertEqual(prompt.pk, deq_transaction.extra_info['prompt'])
+
+    def test_add_answer_to_prompt(self):
+        asker = UserFactory(display_name='asker', email='asker@oracle.eth')
+        DeqTransactionFactory(user=asker, amount=500)
+        response = self._api_create_prompt(asker, 500)
+        self.assertEqual(201, response.status_code)
+        resp_data = response.json()
+        prompt = Prompt.objects.get(pk=resp_data['pk'])
+        answerer = UserFactory(display_name='answerer', email='answerer@oracle.eth')
+        response = self._api_create_answer(answerer, prompt.pk)
+        self.assertEqual(201, response.status_code)
+        answer = Answer.objects.get(pk=response.json()['pk'])
+        answers = list(prompt.answers.all())
+        self.assertEqual(1, len(answers))
+        self.assertEqual(answer.pk, answers[0].pk)
+        self.assertEqual(0, answer.votes)
+        response = self._api_create_vote_cast(asker, 300, answer.pk, prompt.pk)
+        self.assertEqual(201, response.status_code)
+        answer.refresh_from_db()
+        self.assertEqual(300, answer.votes)

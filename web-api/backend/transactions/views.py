@@ -5,6 +5,11 @@ from backend.transactions.models import DeqTransaction
 from backend.transactions.serializers import DeqTransactionSerializer
 
 
+class DeqTransactionCreate(generics.CreateAPIView):
+    serializer_class = DeqTransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+
 class DeqTransacionList(generics.ListAPIView):
     serializer_class = DeqTransactionSerializer
     permission_classes = [IsAuthenticated]

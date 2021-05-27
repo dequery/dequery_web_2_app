@@ -27,22 +27,21 @@ class Prompt(models.Model):
         prompts = cls.objects.filter(status=PROMPT_STATUS_CHOICES.CLOSING)
         for prompt in prompts:
             prompt.distribute()
-            prompt.status = PROMPT_STATUS_CHOICES.CLOSED
-            prompt.save(update_fields=['status'])
 
     @property
     def bounty(self):
         bounty = 0
         deq_transactions = DeqTransaction.objects.filter(
             category=TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY,
-            other_pk=self.pk)
+            extra_info__prompt=self.pk)
         for deq_transaction in deq_transactions:
             bounty += deq_transaction.amount
         return bounty
 
     def distribute(self):
-        self.status = PROMPT_STATUS_CHOICES.CLOSING
-        self.save(update_fields=['status'])
+        self.refresh_from_db()
+        if self.status != PROMPT_STATUS_CHOICES.CLOSING:
+            return self
 
         answers = self.answers.all()
         answer_count = len(answers)
@@ -55,7 +54,7 @@ class Prompt(models.Model):
                 amount=self.bounty,
                 category=TRANSACTION_CATEGORY_CHOICES.FROM_EXPIRED_PROMPT,
                 user=self.user,
-                other_pk=self.pk,
+                extra_info={'prompt': self.pk}
                 )
             deq_transaction.save()
         elif answer_vote_total == 0:
@@ -66,7 +65,7 @@ class Prompt(models.Model):
                     amount=deq_payment,
                     category=TRANSACTION_CATEGORY_CHOICES.FROM_ANSWER,
                     user=answer.user,
-                    other_pk=answer.pk,
+                    extra_info={'answer': answer.pk}
                     )
                 deq_transaction.save()
         else:
@@ -76,7 +75,7 @@ class Prompt(models.Model):
                     amount=deq_payment,
                     category=TRANSACTION_CATEGORY_CHOICES.FROM_ANSWER,
                     user=answer.user,
-                    other_pk=answer.pk,
+                    extra_info={'answer': answer.pk}
                     )
                 deq_transaction.save()
         self.status = PROMPT_STATUS_CHOICES.CLOSED

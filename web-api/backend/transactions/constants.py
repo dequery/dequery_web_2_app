@@ -8,6 +8,7 @@ TRANSACTION_CATEGORY_CHOICES = Choices(
     ('from_source', 'FROM_SOURCE', 'From source database'),  # money printer go BRRR
     ('from_expired_prompt', 'FROM_EXPIRED_PROMPT', 'Prompt expired with no answers'),
     ('to_eth', 'TO_ETH', 'DEQ cashed out to ETH'),
+    ('to_usd', 'TO_USD', 'DEQ cashed out to USD'),
     ('to_prompt_bounty', 'TO_PROMPT_BOUNTY', 'To create a prompt bounty'),
 )
 

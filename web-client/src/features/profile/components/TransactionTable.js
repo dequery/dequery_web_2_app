@@ -50,11 +50,14 @@ function TransactionTable(props) {
     return display_mapping[transaction.category];
   }
 
-  const renderReference = (transaction) => {
-    const answer_categories = ['from_answer'];
-    const blank_categories = ['from_source', 'to_eth']
-    const prompt_categories = ['to_prompt_bounty', 'from_prompt_added_bounty', 'from_expired_prompt'];
-    // todo finish
+  const renderData = (transaction) => {
+    if (['from_answer', 'from_prompt_added_bounty', 'from_expired_prompt', 'to_prompt_bounty'].includes(transaction.category)) {
+      const promptPk = transaction.extra_info['prompt'];
+      return (
+        <PlainLink to={`/prompts/${promptPk}`}>Prompt {promptPk}</PlainLink>
+      );
+    }
+    return '';
   }
 
   return (
@@ -64,6 +67,7 @@ function TransactionTable(props) {
           <TableRow>
             <TableCell>Amount</TableCell>
             <TableCell>Category</TableCell>
+            <TableCell>Data</TableCell>
             <TableCell align="right">Created</TableCell>
           </TableRow>
         </TableHead>
@@ -74,6 +78,7 @@ function TransactionTable(props) {
                 {renderAmount(transaction)}
               </TableCell>
               <TableCell>{renderCategory(transaction)}</TableCell>
+              <TableCell>{renderData(transaction)}</TableCell>
               <TableCell align="right">{renderCreated(transaction)}</TableCell>
             </TableRow>
           ))}

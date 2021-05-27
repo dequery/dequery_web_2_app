@@ -34,7 +34,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
             amount=initial_deq_amount,
             category=TRANSACTION_CATEGORY_CHOICES.FROM_SOURCE,
             user=user,
-            other_pk=0
         )
         deq_transaction.save()
         return user
