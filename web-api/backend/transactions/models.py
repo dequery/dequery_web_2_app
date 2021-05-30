@@ -1,7 +1,7 @@
 from django.db import models
 
 from backend.users.models import User
-from backend.transactions.constants import TRANSACTION_CATEGORY_CHOICES, TRANSACTION_STATUS_CHOICES
+from backend.transactions.constants import DEQ_TO_ETH_CONVERSION_RATIO, ETH_TO_DEQ_CONVERSION_RATIO, TRANSACTION_CATEGORY_CHOICES, TRANSACTION_STATUS_CHOICES
 
 
 class DeqTransactionManager(models.Manager):
@@ -17,3 +17,11 @@ class DeqTransaction(models.Model):
     status = models.CharField(max_length=64, choices=TRANSACTION_STATUS_CHOICES, default=TRANSACTION_STATUS_CHOICES.FULFILLED)
 
     objects = DeqTransactionManager()
+
+    @classmethod
+    def eth_to_deq(cls, eth_amount):
+        return eth_amount * DEQ_TO_ETH_CONVERSION_RATIO
+    
+    @classmethod
+    def deq_to_eth(cls, deq_amount):
+        return deq_amount * ETH_TO_DEQ_CONVERSION_RATIO

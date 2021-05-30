@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from backend.answers.views import AnswerCreate, AnswerDetail, AnswerList
 from backend.prompts.views import PromptCreate, PromptDetail, PromptList
-from backend.transactions.views import DeqTransacionList
+from backend.transactions.views import DeqTransactionCreate, DeqTransacionList
 from backend.users.views import AlphaRequestCreate, UserCreate, UserDetail, RetrieveUserFromToken, ResetPassword
 from backend.votes.views import VoteBalanceDetail, VoteBalanceList, VoteCastCreate
 
@@ -24,7 +24,8 @@ urlpatterns = [
     path('api/prompts/create/', PromptCreate.as_view(), name='prompt_create'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/transactions/', DeqTransacionList.as_view(), name='prompt_list'),
+    path('api/transactions/', DeqTransacionList.as_view(), name='transaction_list'),
+    path('api/transactions/create/', DeqTransactionCreate.as_view(), name='transaction_create'),
     path('api/users/create/', UserCreate.as_view(), name='user_create'),
     path('api/users/retrieve/', RetrieveUserFromToken.as_view(), name='user_retrieve_from_token'),
     path('api/users/reset-password/', ResetPassword.as_view(), name='user_reset_password'),
