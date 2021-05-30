@@ -7,7 +7,8 @@ from rest_framework.test import APIClient
 from backend.users.factories import UserFactory
 from backend.transactions.factories import DeqTransactionFactory, TEST_ETH_ADDRESS
 from backend.transactions.models import DeqTransaction
-from backend.transactions.constants import ETH_GAS_FEE, TRANSACTION_CATEGORY_CHOICES, SPENDING_CATEGORIES, RECEIVING_CATEGORIES
+from backend.transactions.constants import ETH_GAS_FEE, TRANSACTION_CATEGORY_CHOICES, TRANSACTION_STATUS_CHOICES, SPENDING_CATEGORIES, RECEIVING_CATEGORIES
+
 
 client = APIClient()
 
@@ -48,19 +49,20 @@ class DeqTransactionTests(TestCase):
         self.assertEqual('A valid eth address was not provided', response.json()['non_field_errors'][0])
 
         # it fails if user does not have enough DEQ
-        response = self._api_create_transaction(200, TRANSACTION_CATEGORY_CHOICES.TO_ETH, {'eth_address': TEST_ETH_ADDRESS}, user)
+        response = self._api_create_transaction(200, TRANSACTION_CATEGORY_CHOICES.TO_ETH, {'ethereum_address': TEST_ETH_ADDRESS}, user)
         self.assertEqual(400, response.status_code)
         self.assertEqual('Not enough DEQ to make transaction', response.json()['non_field_errors'][0])
 
         # it fails if user can not cover gas fee
         DeqTransactionFactory(amount=200, user=user)
-        response = self._api_create_transaction(200, TRANSACTION_CATEGORY_CHOICES.TO_ETH, {'eth_address': TEST_ETH_ADDRESS}, user)
+        response = self._api_create_transaction(200, TRANSACTION_CATEGORY_CHOICES.TO_ETH, {'ethereum_address': TEST_ETH_ADDRESS}, user)
         self.assertEqual(400, response.status_code)
         self.assertEqual('Not enough DEQ to make transaction', response.json()['non_field_errors'][0])
 
         # it works when user has enough DEQ and a valid ETH adress
         gas_amount = DeqTransaction.eth_to_deq(ETH_GAS_FEE)
         DeqTransactionFactory(amount=gas_amount * 2, user=user)
-        response = self._api_create_transaction(200, TRANSACTION_CATEGORY_CHOICES.TO_ETH, {'eth_address': TEST_ETH_ADDRESS}, user)
+        response = self._api_create_transaction(200, TRANSACTION_CATEGORY_CHOICES.TO_ETH, {'ethereum_address': TEST_ETH_ADDRESS}, user)
         self.assertEqual(201, response.status_code)
         self.assertAlmostEqual(gas_amount, float(user.deq_balance), 8)
+        self.assertEqual(TRANSACTION_STATUS_CHOICES.PROCCESSING, response.json()['status'])

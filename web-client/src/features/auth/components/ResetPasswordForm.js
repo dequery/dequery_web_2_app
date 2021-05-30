@@ -7,7 +7,6 @@ import { useParams } from 'react-router-dom';
 
 import { resetPassword, selectIsFetching, selectRespError, selectUser, selectResetPasswordSuccess } from 'features/auth/authSlice';
 
-import PlainLink from 'features/topnav/components/PlainLink';
 import TextInput from 'features/auth/components/TextInput';
 
 import Alert from '@material-ui/lab/Alert';

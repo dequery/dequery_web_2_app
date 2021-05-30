@@ -6,6 +6,7 @@ import { listTransactions, selectTransactionList } from 'features/profile/profil
 
 import PlainLink from 'features/topnav/components/PlainLink';
 
+import { Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,6 +14,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
 
 
 function TransactionTable(props) {
@@ -54,18 +56,28 @@ function TransactionTable(props) {
     if (['from_answer', 'from_prompt_added_bounty', 'from_expired_prompt', 'to_prompt_bounty'].includes(transaction.category)) {
       const promptPk = transaction.extra_info['prompt'];
       return (
-        <PlainLink to={`/prompts/${promptPk}`}>Prompt {promptPk}</PlainLink>
+        <Link to={`/prompts/${promptPk}`}>Prompt {promptPk}</Link>
+      );
+    } else if (transaction.category === 'to_eth') {
+      const showTransactionLink = transaction.extra_info && transaction.extra_info.tx_hash;
+      return (
+        <div>
+          <a href={`https://etherscan.io/address/${transaction.extra_info.ethereum_address}`}>Deposit Address</a>
+          <div/>
+          {showTransactionLink && <a href={`https://etherscan.io/tx/${transaction.extra_info.tx_hash}`}>Tx Hash</a>}
+        </div>
       );
     }
     return '';
   }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer style={{width: '100%'}} component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Amount</TableCell>
+            <TableCell>Status</TableCell>
             <TableCell>Category</TableCell>
             <TableCell>Data</TableCell>
             <TableCell align="right">Created</TableCell>
@@ -77,6 +89,7 @@ function TransactionTable(props) {
               <TableCell component="th" scope="row">
                 {renderAmount(transaction)}
               </TableCell>
+              <TableCell>{transaction.status.toUpperCase()}</TableCell>
               <TableCell>{renderCategory(transaction)}</TableCell>
               <TableCell>{renderData(transaction)}</TableCell>
               <TableCell align="right">{renderCreated(transaction)}</TableCell>

@@ -36,7 +36,7 @@ RECEIVING_CATEGORIES = [
 
 TRANSACTION_STATUS_CHOICES = Choices(
     ('new', 'NEW', 'Initially created'),
-    ('proccessing', 'PROCCESING', 'In process'),
+    ('proccessing', 'PROCCESSING', 'In process'),
     ('rejected', 'REJECTED', 'Rejected'),
     ('fulfilled', 'FULFILLED', 'Fulfilled')
 )

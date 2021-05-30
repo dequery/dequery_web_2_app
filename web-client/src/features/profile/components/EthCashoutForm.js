@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { Redirect } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { EditorState, convertToRaw } from 'draft-js';
 
-import { createPrompt, selectIsFetching, selectRespError, selectPromptCreated } from 'features/prompt/promptSlice';
-import { retrieveUser } from 'features/auth/authSlice';
+import { clearTransactionCreated, createTransaction, selectTransactionCreated, selectIsFetching, selectRespError } from 'features/profile/profileSlice';
 
 import AuthRedirect from 'features/auth/components/AuthRedirect';
-import PromptEditor from 'features/prompt/components/PromptEditor';
 import TextInput from 'features/auth/components/TextInput';
 
-import { DateTimePicker } from "@material-ui/pickers";
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -28,38 +24,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CreatePromptForm() {
-  const classes = useStyles();
+function EthCashoutForm() {
   const dispatch = useDispatch();
   const isFetching = useSelector(selectIsFetching);
-  const promptCreated = useSelector(selectPromptCreated);
   const respError = useSelector(selectRespError);
   const nonFieldError = respError.detail;
+  const classes = useStyles();
+  const transactionCreated = useSelector(selectTransactionCreated);
   const { handleSubmit, control } = useForm();
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [expirationDatetime, handleDateChange] = useState(null);
 
   useEffect(() => {
-    dispatch(retrieveUser());
-    return () => dispatch(retrieveUser());
-  }, [dispatch])
+    dispatch(clearTransactionCreated());
+    return () => dispatch(clearTransactionCreated());
+  }, [dispatch]);
 
-  const onSubmitCreate = (data, editorState) => {
-    data.content = convertToRaw(editorState.getCurrentContent());
-    data.expirationDatetime = expirationDatetime;
-    dispatch(createPrompt(data));
-  };
-
-  if (promptCreated.pk) {
-    return <Redirect to={`/prompts/${promptCreated.pk}`} />;
+  if (transactionCreated) {
+    return <Redirect to="/profile" />;
   }
 
+  const onSubmit = data => {
+    const formattedData = {};
+    formattedData.extra_info = { ethereum_address: data.ethereumAddress };
+    formattedData.amount = data.amount;
+    formattedData.category = 'to_eth';
+    dispatch(createTransaction(formattedData));
+  };
+
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <AuthRedirect />
       <Card>
         <CardContent>
-          <form onSubmit={handleSubmit((data) => onSubmitCreate(data, editorState))}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Grid
               alignItems="center"
               container
@@ -68,7 +64,7 @@ function CreatePromptForm() {
               spacing={3}
             >
               <Grid item xs={12}>
-                <Typography align="center" variant="h3">Create Prompt</Typography>
+                <Typography align="center" variant="h3">Convert DEQ Earnings</Typography>
               </Grid>
 
               {nonFieldError && (
@@ -79,47 +75,35 @@ function CreatePromptForm() {
 
               <Grid item xs={12}>
                 <TextInput
-                  name="title"
+                  name="amount"
                   control={control}
-                  inputId="title"
-                  fieldErrorMessage={respError.title}
-                  label="title"
+                  inputId="amount"
+                  fieldErrorMessage={respError.amount}
+                  label="Amount of DEQ to exchange for ETH"
                   rules={{
                     required: 'Required'
                   }}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <DateTimePicker
-                  label="Expiration Datetime"
-                  inputVariant="outlined"
-                  value={expirationDatetime}
-                  onChange={handleDateChange}
-                  fullWidth={true}
-                  disablePast={true}
+                  type="number"
                 />
               </Grid>
 
               <Grid item xs={12}>
                 <TextInput
-                  name="bounty"
+                  name="ethereumAddress"
                   control={control}
-                  inputId="bounty"
-                  fieldErrorMessage={respError.bounty}
-                  label="bounty"
-                  type="number"
+                  inputId="ethereumAddress"
+                  fieldErrorMessage={respError.extra_data}
+                  helperText="eg. 0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+                  label="Public Ethereum Address"
                   rules={{
                     required: 'Required'
                   }}
                 />
               </Grid>
 
-              <PromptEditor onEditorStateChange={setEditorState} editorState={editorState} />
-
               <Grid item className={classes.centeredGrid} xs={12}>
                 <Button disabled={isFetching} variant="contained" color="primary" type="submit">
-                    Create
+                    Submit
                 </Button>
               </Grid>
             </Grid>
@@ -130,4 +114,4 @@ function CreatePromptForm() {
   );
 }
 
-export default CreatePromptForm;
+export default EthCashoutForm;

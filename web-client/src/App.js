@@ -10,6 +10,7 @@ import About from 'features/about/components/About';
 import AlphaRequestForm from 'features/auth/components/AlphaRequestForm';
 import CookieLogin from 'features/auth/components/CookieLogin';
 import CreatePromptForm from 'features/prompt/components/CreatePromptForm';
+import EthCashoutForm from 'features/profile/components/EthCashoutForm';
 import LoginForm from 'features/auth/components/LoginForm';
 import PromptDetail from 'features/prompt/components/PromptDetail';
 import PromptList from 'features/prompt/components/PromptList';
@@ -47,6 +48,7 @@ function App() {
           <Switch>
             <Route exact path="/about" component={About} />
             <Route exact path="/alpharequest" component={AlphaRequestForm} />
+            <Route exact path="/deq-to-eth" component={EthCashoutForm} />
             <Route exact path="/login" component={LoginForm} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/prompts/create" component={CreatePromptForm} />

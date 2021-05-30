@@ -2,13 +2,13 @@ from cryptoaddress import EthereumAddress
 from rest_framework import serializers
 
 from backend.transactions.models import DeqTransaction
-from backend.transactions.constants import ETH_GAS_FEE, TRANSACTION_CATEGORY_CHOICES, VALID_API_CATEGORIES
+from backend.transactions.constants import ETH_GAS_FEE, TRANSACTION_CATEGORY_CHOICES, TRANSACTION_STATUS_CHOICES, VALID_API_CATEGORIES
 
 
 class DeqTransactionDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeqTransaction
-        fields = ['amount', 'created', 'category', 'extra_info', 'pk', 'user']
+        fields = ['amount', 'created', 'category', 'extra_info', 'pk', 'status', 'user']
         read_only_fields = ['created', 'pk']
 
 
@@ -17,7 +17,7 @@ class DeqTransactionCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DeqTransaction
-        fields = ['amount', 'created', 'category', 'extra_info', 'pk', 'user']
+        fields = ['amount', 'created', 'category', 'extra_info', 'pk', 'status', 'user']
         read_only_fields = ['created', 'pk']
 
     def validate_category(self, value):
@@ -28,7 +28,7 @@ class DeqTransactionCreateSerializer(serializers.ModelSerializer):
     def _validate_extra_info(self, validated_data):
         if validated_data['category'] == TRANSACTION_CATEGORY_CHOICES.TO_ETH:
             try:
-                eth_address = validated_data['extra_info']['eth_address']
+                eth_address = validated_data['extra_info']['ethereum_address']
                 EthereumAddress(eth_address)
             except:
                 raise serializers.ValidationError('A valid eth address was not provided')
@@ -41,3 +41,10 @@ class DeqTransactionCreateSerializer(serializers.ModelSerializer):
             if remaining_balance < 0:
                 raise serializers.ValidationError('Not enough DEQ to make transaction')
         return validated_data
+
+    def create(self, validated_data):
+        if validated_data['category'] == TRANSACTION_CATEGORY_CHOICES.TO_ETH:
+            validated_data['status'] = TRANSACTION_STATUS_CHOICES.PROCCESSING
+        deq_transaction = DeqTransaction.objects.create(**validated_data)
+        deq_transaction.save()
+        return deq_transaction

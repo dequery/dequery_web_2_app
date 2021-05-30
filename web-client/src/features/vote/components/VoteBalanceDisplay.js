@@ -18,7 +18,7 @@ function VoteBalance(props) {
   useEffect(() => {
     dispatch(listVoteBalances({ promptPk: prompt.pk }));
     return () => dispatch(clearVoteBalanceList());
-  }, [dispatch, voteCastCreated]);
+  }, [dispatch, voteCastCreated, prompt]);
 
   if (user.pk) {
     return (

@@ -31,7 +31,7 @@ function TextInput(props) {
             InputLabelProps={props.InputLabelProps}
             error={hasError(error)}
             disabled={props.disabled}
-            helperText={errorMessage(error)}
+            helperText={errorMessage(error) || props.helperText}
             fullWidth={true}
             variant="outlined"
             value={value}
