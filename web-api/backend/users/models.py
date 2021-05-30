@@ -108,7 +108,9 @@ class AlphaCodeManager(models.Manager):
 class AlphaCode(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     code = models.CharField(max_length=12, db_index=True, unique=True)
-    used = models.BooleanField(default=False)
+    use_count = models.IntegerField(default=1)
+    used = models.IntegerField(default=0)
+    endowment = models.DecimalField(default=0.000000000000000000, max_digits=29, decimal_places=18)
 
     objects = AlphaCodeManager()
 

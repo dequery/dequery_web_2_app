@@ -38,7 +38,7 @@ function SignupForm() {
     dispatch(signup(data));
   };
 
-  if (user.pk) {
+  if (Object.keys(user) === 0) {
     return <Redirect to="/" />;
   }
 

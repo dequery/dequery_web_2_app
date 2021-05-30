@@ -16,24 +16,10 @@ class AlphaRequestCreate(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class UserCreate(mixins.CreateModelMixin, generics.GenericAPIView):
+class UserCreate(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
     permission_classes = [permissions.AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        try:
-            alpha_code = AlphaCode.objects.get(code=request.data.get('alpha_passcode'))
-        except:
-            return Response({'detail': 'Invalid alpha code'}, status=401)
-
-        if alpha_code.used:
-            return Response({'detail': 'Alpha code already used'}, status=401)
-
-        alpha_code.used = True
-        alpha_code.save(update_fields=['used'])
-
-        return self.create(request, *args, **kwargs)
 
 
 class UserDetail(generics.RetrieveAPIView):
