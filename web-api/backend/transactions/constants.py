@@ -2,7 +2,7 @@ from django.db.models.fields import CharField
 from model_utils import Choices
 
 
-ETH_GAS_FEE = 0.00000002
+ETH_GAS_FEE = 0.000000023
 
 DEQ_TO_ETH_CONVERSION_RATIO = 0.0001
 ETH_TO_DEQ_CONVERSION_RATIO = 10000

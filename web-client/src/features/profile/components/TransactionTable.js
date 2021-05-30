@@ -4,8 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { listTransactions, selectTransactionList } from 'features/profile/profileSlice';
 
-import PlainLink from 'features/topnav/components/PlainLink';
-
 import { Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -85,7 +83,7 @@ function TransactionTable(props) {
         </TableHead>
         <TableBody>
           {transactions.map((transaction) => (
-            <TableRow key={transaction.name}>
+            <TableRow key={transaction.pk}>
               <TableCell component="th" scope="row">
                 {renderAmount(transaction)}
               </TableCell>

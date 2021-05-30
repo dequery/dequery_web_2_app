@@ -31,7 +31,8 @@ function EthCashoutForm() {
   const nonFieldError = respError.detail;
   const classes = useStyles();
   const transactionCreated = useSelector(selectTransactionCreated);
-  const { handleSubmit, control } = useForm();
+  const { handleSubmit, control, watch } = useForm();
+  const watchAmount = watch('amount');
 
   useEffect(() => {
     dispatch(clearTransactionCreated());
@@ -49,6 +50,14 @@ function EthCashoutForm() {
     formattedData.category = 'to_eth';
     dispatch(createTransaction(formattedData));
   };
+
+  const ethAmount = deqAmount => {
+    if (!deqAmount) {
+      return 0;
+    }
+    const gasFee = 0.000000023;
+    return (deqAmount / 10000) - gasFee;
+  }
 
   return (
     <Container maxWidth="sm">
@@ -99,6 +108,11 @@ function EthCashoutForm() {
                     required: 'Required'
                   }}
                 />
+              </Grid>
+
+              <Grid className={classes.centeredGrid} item xs={12}>
+                <Typography variant="body1">Convert {watchAmount || '0'} DEQ to {ethAmount(watchAmount)} ETH</Typography>
+                <Typography variant="body2">10,000 DEQ converts to 1 ETH with a 23 Gwei gas fee</Typography>
               </Grid>
 
               <Grid item className={classes.centeredGrid} xs={12}>
