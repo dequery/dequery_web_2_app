@@ -1,7 +1,8 @@
 import React from 'react';
 import MomentUtils from '@date-io/moment';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 
@@ -22,6 +23,27 @@ import Topnav from 'features/topnav/components/Topnav';
 import Grid from '@material-ui/core/Grid';
 
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#517694',
+      contrastText: '#fbf9f9',
+    },
+    secondary: {
+      main: '#8697A5',
+      contrastText: '#fbf9f9',
+    },
+    background: {
+      default: '#F2EEEB',
+      paper: '#fbf9f9'
+    },
+    text: {
+      primary: '#181717',
+      secondary: '#fbf9f9',
+    }
+  },
+});
+
 const useStyles = makeStyles((theme) => ({
   main: {
     marginTop: '40px',
@@ -34,6 +56,7 @@ function App() {
 
   return (
     <Router>
+      <ThemeProvider theme={theme}>
       <MuiPickersUtilsProvider utils={MomentUtils}>
         <CookieLogin />
         <CssBaseline />
@@ -60,6 +83,7 @@ function App() {
           </Switch>
         </Grid>
       </MuiPickersUtilsProvider>
+      </ThemeProvider>
     </Router>
   );
 }

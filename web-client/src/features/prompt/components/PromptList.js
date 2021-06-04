@@ -35,6 +35,10 @@ function PromptList() {
           <PlainLink to='/prompts/create'>
             <Button disabled={Object.keys(user).length === 0} variant="contained" color="primary">Create Prompt</Button>
           </PlainLink>
+
+          <PlainLink to='/about'>
+            <Button>Learn How Dequery Works</Button>
+          </PlainLink>
         </Grid>
         {promptList.results.map((prompt, i) => {
           return (
