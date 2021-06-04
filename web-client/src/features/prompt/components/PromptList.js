@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { clearPromptList, listPrompts, selectPromptList } from 'features/prompt/promptSlice';
 import { selectUser } from 'features/auth/authSlice';
@@ -12,7 +13,15 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 
 
+const useStyles = makeStyles((theme) => ({
+  createPromptButton: {
+    marginRight: '10px',
+  },
+}));
+
+
 function PromptList() {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const promptList = useSelector(selectPromptList);
   const user = useSelector(selectUser);
@@ -33,11 +42,11 @@ function PromptList() {
       >
         <Grid item xs={12}>
           <PlainLink to='/prompts/create'>
-            <Button disabled={Object.keys(user).length === 0} variant="contained" color="primary">Create Prompt</Button>
+            <Button className={classes.createPromptButton} disabled={Object.keys(user).length === 0} variant="contained" color="primary">Create Prompt</Button>
           </PlainLink>
 
           <PlainLink to='/about'>
-            <Button>Learn How Dequery Works</Button>
+            <Button color="secondary" variant="contained">Learn How Dequery Works</Button>
           </PlainLink>
         </Grid>
         {promptList.results.map((prompt, i) => {

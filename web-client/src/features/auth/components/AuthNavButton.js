@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { selectUser } from 'features/auth/authSlice';
 
@@ -10,7 +11,14 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 
+const useStyles = makeStyles((theme) => ({
+  signUpButton: {
+    marginRight: '10px',
+  },
+}));
+
 function AuthNavButton() {
+  const classes = useStyles();
   const user = useSelector(selectUser);
 
   if (user.pk) {
@@ -30,7 +38,7 @@ function AuthNavButton() {
   return (
     <>
       <PlainLink to="/signup">
-        <Button variant="contained" color="secondary">Signup</Button>
+        <Button className={classes.signUpButton} variant="contained" color="secondary">Signup</Button>
       </PlainLink>
 
       <PlainLink to="/login">
