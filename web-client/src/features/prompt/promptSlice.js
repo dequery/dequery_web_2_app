@@ -4,6 +4,7 @@ import dequeryClient from 'dequeryClient';
 
 const initialState = {
   respError: {},
+  increaseBountyRespError: {},
   isFetching: false,
   promptDetail: {},
   promptCreated: {},
@@ -23,11 +24,22 @@ export const createAnswer = createAsyncThunk(
 
 export const createPrompt = createAsyncThunk(
   'prompt/submitPrompt',
-  async ({ bounty, content, expirationDatetime, title }, thunkAPI) => dequeryClient(
+  async ({ askersCut, bounty, content, expirationDatetime, title }, thunkAPI) => dequeryClient(
     '/api/prompts/create/',
     'POST',
     thunkAPI,
-    { bounty, content, expiration_datetime: expirationDatetime, title },
+    { askers_cut: askersCut, bounty, content, expiration_datetime: expirationDatetime, title },
+    true
+  )
+);
+
+export const increasePromptBounty = createAsyncThunk(
+  'prompt/increasePromptBounty',
+  async ({ amount, extraInfo }, thunkAPI) => dequeryClient(
+    '/api/transactions/create/',
+    'POST',
+    thunkAPI,
+    { amount, category: 'increase_prompt_bounty', extra_info: extraInfo },
     true
   )
 );
@@ -90,6 +102,18 @@ export const promptSlice = createSlice({
         state.isFetching = false;
         state.respError = action.payload;
       })
+      .addCase(increasePromptBounty.pending, (state) => {
+        state.isFetching = true;
+        state.increaseBountyRespError = initialState.increaseBountyRespError;
+      })
+      .addCase(increasePromptBounty.fulfilled, (state, action) => {
+        state.isFetching = false;
+        state.promptDetail.bounty = (parseFloat(state.promptDetail.bounty) + parseFloat(action.payload.amount)).toString();
+      })
+      .addCase(increasePromptBounty.rejected, (state, action) => {
+        state.isFetching = false;
+        state.respError = action.payload;
+      })
       .addCase(listPrompts.pending, (state) => {
         state.isFetching = true;
         state.respError = initialState.respError;
@@ -120,6 +144,7 @@ export const promptSlice = createSlice({
 export const { clearPromptDetail, clearPromptList, clearPromptCreated } = promptSlice.actions;
 
 export const selectIsFetching = (state) => state.prompt.isFetching;
+export const selectIncreaseBountyRespError = (state) => state.prompt.increaseBountyRespError;
 export const selectPromptCreated = (state) => state.prompt.promptCreated;
 export const selectPromptList = (state) => state.prompt.promptList;
 export const selectPromptDetail = (state) => state.prompt.promptDetail;

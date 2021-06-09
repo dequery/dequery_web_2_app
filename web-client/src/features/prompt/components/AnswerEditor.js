@@ -11,7 +11,7 @@ function AnswerEditor(props) {
       editorClassName="demo-editor"
       editorState={props.editorState}
       onEditorStateChange={props.onEditorStateChange}
-      editorStyle={{ height: '300px', width: '100%', border: '1px solid black', padding: '10px' }}
+      editorStyle={{ height: '300px', width: '100%', border: '1px solid black', padding: '10px', borderRadius: '4px' }}
     />
   );
 }

@@ -101,17 +101,29 @@ function CreatePromptForm() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <TextInput
                   name="bounty"
                   control={control}
                   inputId="bounty"
                   fieldErrorMessage={respError.bounty}
-                  label="bounty"
+                  label="Bounty"
                   type="number"
                   rules={{
                     required: 'Required'
                   }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextInput
+                  name="askersCut"
+                  control={control}
+                  inputId="askersCut"
+                  fieldErrorMessage={respError.askers_cut}
+                  label="Askers cut"
+                  type="number"
+                  defaultValue={0.1}
                 />
               </Grid>
 

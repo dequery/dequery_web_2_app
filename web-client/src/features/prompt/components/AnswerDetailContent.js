@@ -13,7 +13,7 @@ function AnswerDetailContent(props) {
       editorState={EditorState.createWithContent(convertFromRaw(props.content))}
       wrapperClassName="demo-wrapper"
       editorClassName="demo-editor"
-      editorStyle={{'minHeight': '300px', 'border': '1px solid black', 'padding': '10px'}}
+      editorStyle={{minHeight: '300px', border: '1px solid black', padding: '10px', borderRadius: '4px'}}
     />
   );
 }

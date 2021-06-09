@@ -14,8 +14,9 @@ import Grid from '@material-ui/core/Grid';
 
 
 const useStyles = makeStyles((theme) => ({
-  createPromptButton: {
+  topButton: {
     marginRight: '10px',
+    marginBottom: '10px',
   },
 }));
 
@@ -42,11 +43,11 @@ function PromptList() {
       >
         <Grid item xs={12}>
           <PlainLink to='/prompts/create'>
-            <Button className={classes.createPromptButton} disabled={Object.keys(user).length === 0} variant="contained" color="primary">Create Prompt</Button>
+            <Button className={classes.topButton} disabled={Object.keys(user).length === 0} variant="contained" color="primary">Create Prompt</Button>
           </PlainLink>
 
           <PlainLink to='/about'>
-            <Button color="secondary" variant="contained">Learn How Dequery Works</Button>
+            <Button className={classes.topButton} color="secondary" variant="contained">Learn How Dequery Works</Button>
           </PlainLink>
         </Grid>
         {promptList.results.map((prompt, i) => {

@@ -69,18 +69,27 @@
 
 [x] Spend Upvotes on Answer
 [x] Upvote Answer UI
-[] Expire Prompt with Distributed Bounty
+[x] Expire Prompt with Distributed Bounty
+
+
+----------------------------------------------
+[x] create deq_transaction
+    [x] enough balance (include gas if TO_ETH)
+    [x] add enough data to extra
+
+
 
 [] Announce in Bankless shill your project
 [] Invite James to ask a question
-[] Invite Douglas to ask a question
+[x] Invite Douglas to ask a question
 
 
 
 ### Not in MVP
-[] Marketing FAQ
-[] Make pretty
+[x] Marketing FAQ
+[x] Make pretty
 [x] test auth/tokens on app render logout if needed
+[] asker's cut backend
 [] Email confirmation of account
 [] Add Tags
 [] Filter or Sort prompts
@@ -89,7 +98,7 @@
 [] Add ammend to answer
 [] Save Prompt as draft
 [] Save Answer as draft
-[] Unit tests
+[x] Unit tests
 [] Remove Alpha Passcode
 
 ### Bugs to Fix
@@ -97,6 +106,5 @@
 [x] No error is shown if prompt title is too long
 [] fix field erros showing up as dict general errors
 [] Pagination of DRF is only 15 for prompt list
-[] Switch to Accordian View [https://material-ui.com/components/accordion/]
 [] Double check error handling on form submissions
 [] Double check Asnc buttons disable while fetching

@@ -12,6 +12,7 @@ class PromptManager(models.Manager):
 
 
 class Prompt(models.Model):
+    askers_cut = models.FloatField(default=0.0)
     content = models.JSONField()
     created = models.DateTimeField(auto_now_add=True)
     expiration_datetime = models.DateTimeField()
@@ -29,10 +30,21 @@ class Prompt(models.Model):
             prompt.distribute()
 
     @property
+    def askers_bounty(self):
+        bounty = 0
+        added_transactions = DeqTransaction.objects.filter(
+            category__in=[TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY],
+            extra_info__prompt=self.pk)
+        for deq_transaction in added_transactions:
+            if not deq_transaction.user.pk == self.user.pk:
+                bounty += deq_transaction.amount
+        return float(bounty) * self.askers_cut
+
+    @property
     def bounty(self):
         bounty = 0
         deq_transactions = DeqTransaction.objects.filter(
-            category=TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY,
+            category__in=[TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY],
             extra_info__prompt=self.pk)
         for deq_transaction in deq_transactions:
             bounty += deq_transaction.amount
@@ -49,28 +61,53 @@ class Prompt(models.Model):
         for answer in answers:
             answer_vote_total += answer.votes
         if answer_count == 0:
-            # refund prompt creator
-            deq_transaction = DeqTransaction.objects.create(
-                amount=self.bounty,
-                category=TRANSACTION_CATEGORY_CHOICES.FROM_EXPIRED_PROMPT,
-                user=self.user,
-                extra_info={'prompt': self.pk}
+            bounty_transactions = DeqTransaction.objects.filter(
+                category__in=[TRANSACTION_CATEGORY_CHOICES.TO_PROMPT_BOUNTY, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY],
+                extra_info__prompt=self.pk)
+
+            # refund bounties
+            for bounty_transaction in bounty_transactions:
+                deq_transaction = DeqTransaction.objects.create(
+                    amount=bounty_transaction.amount,
+                    category=TRANSACTION_CATEGORY_CHOICES.FROM_EXPIRED_PROMPT,
+                    user=bounty_transaction.user,
+                    extra_info={'prompt': self.pk}
                 )
-            deq_transaction.save()
+                deq_transaction.save()
         elif answer_vote_total == 0:
-            # evenly distribute among answers
-            deq_payment = round(self.bounty / answer_count, 18)
+            # evenly distribute among answers minus askers cut
+            askers_bounty = self.askers_bounty
+            if askers_bounty > 0:
+                deq_transaction = DeqTransaction.objects.create(
+                    amount=askers_bounty,
+                    category=TRANSACTION_CATEGORY_CHOICES.FROM_ASKERS_CUT,
+                    user=self.user,
+                    extra_info={'prompt': self.pk}
+                    )
+                deq_transaction.save()
+            answerers_bounty = float(self.bounty) - askers_bounty
+            answerers_deq_payment = round(answerers_bounty / answer_count, 18)
             for answer in answers:
                 deq_transaction = DeqTransaction.objects.create(
-                    amount=deq_payment,
+                    amount=answerers_deq_payment,
                     category=TRANSACTION_CATEGORY_CHOICES.FROM_ANSWER,
                     user=answer.user,
                     extra_info={'answer': answer.pk}
                     )
                 deq_transaction.save()
         else:
+            askers_bounty = self.askers_bounty
+            if askers_bounty > 0:
+                deq_transaction = DeqTransaction.objects.create(
+                    amount=askers_bounty,
+                    category=TRANSACTION_CATEGORY_CHOICES.FROM_ASKERS_CUT,
+                    user=self.user,
+                    extra_info={'prompt': self.pk}
+                    )
+                deq_transaction.save()
+            answerers_bounty = float(self.bounty) - askers_bounty
             for answer in answers:
-                deq_payment = round((answer.votes / answer_vote_total) * float(self.bounty), 18)
+                deq_payment = round((answer.votes / answer_vote_total) * float(answerers_bounty), 18)
                 deq_transaction = DeqTransaction.objects.create(
                     amount=deq_payment,
                     category=TRANSACTION_CATEGORY_CHOICES.FROM_ANSWER,

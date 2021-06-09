@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { selectUser } from 'features/auth/authSlice';
-import { createVoteCast, selectVoteBalanceList, selectRespErrorCreate, selectIsFetching } from 'features/vote/voteSlice';
+import { increasePromptBounty, selectIncreaseBountyRespError, selectIsFetching } from 'features/prompt/promptSlice';
 
 import TextInput from 'features/auth/components/TextInput';
 
@@ -19,26 +19,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function VoteCastForm(props) {
+function IncreaseBountyForm(props) {
   const dispatch = useDispatch();
-  const { answer } = props;
+  const { prompt } = props;
   const isFetching = useSelector(selectIsFetching);
   const user = useSelector(selectUser);
-  const voteBalanceList = useSelector(selectVoteBalanceList);
-  const respErrorCreate = useSelector(selectRespErrorCreate);
-  const nonFieldError = respErrorCreate.detail;
+  const increaseBountyRespError = useSelector(selectIncreaseBountyRespError);
+  const nonFieldError = increaseBountyRespError.detail;
   const classes = useStyles();
   const { handleSubmit, control } = useForm();
   const disabled = Boolean(!user.pk || isFetching);
 
-  const onVoteSubmit = (data, voteBalanceList, answer) => {
-    data.vote_balance = voteBalanceList.results[0].pk;
-    data.answer = answer.pk;
-    dispatch(createVoteCast(data));
+  const onSubmit = (data, prompt) => {
+    data.extraInfo = { prompt: prompt.pk }
+    dispatch(increasePromptBounty(data));
   };
 
   return (
-    <form onSubmit={handleSubmit((data) => onVoteSubmit(data, voteBalanceList, answer))}>
+    <form onSubmit={handleSubmit((data) => onSubmit(data, prompt))}>
       <Grid
         alignItems="center"
         container
@@ -52,8 +50,8 @@ function VoteCastForm(props) {
             control={control}
             disabled={disabled}
             inputId="amount"
-            fieldErrorMessage={respErrorCreate.amount}
-            label="Amount"
+            fieldErrorMessage={increaseBountyRespError.amount}
+            label="DEQ Amount"
             type="number"
             rules={{
               required: 'Required'
@@ -63,7 +61,7 @@ function VoteCastForm(props) {
 
         <Grid item className={classes.centeredGrid} xs={6} sm={3}>
           <Button disabled={disabled} variant="contained" color="primary" type="submit">
-              Add Votes
+              Add Bounty
           </Button>
         </Grid>
 
@@ -79,4 +77,4 @@ function VoteCastForm(props) {
   );
 }
 
-export default VoteCastForm;
+export default IncreaseBountyForm;

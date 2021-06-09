@@ -32,8 +32,7 @@ function AnswerAccordion(props) {
   const user = useSelector(selectUser);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const { prompt } = props;
-  console.log(prompt.status)
-  const disabled = Boolean((user == null) || (prompt.status !== 'active'));
+  const disabled = Boolean(!user.pk || (prompt.status !== 'active'));
 
   const onSubmitCreate = () => {
     const content = convertToRaw(editorState.getCurrentContent());

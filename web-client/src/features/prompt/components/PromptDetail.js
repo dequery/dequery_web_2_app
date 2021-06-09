@@ -9,6 +9,7 @@ import { clearPromptCreated, clearPromptDetail, retrievePrompt, selectIsFetching
 
 import AnswerAccordion from 'features/prompt/components/AnswerAccordion';
 import AnswerCard from 'features/prompt/components/AnswerCard';
+import IncreaseBountyForm from 'features/prompt/components/IncreaseBountyForm';
 import PromptDetailContent from 'features/prompt/components/PromptDetailContent';
 import VoteBalanceDisplay from 'features/vote/components/VoteBalanceDisplay';
 
@@ -67,6 +68,7 @@ function PromptDetail(props) {
                   <VoteBalanceDisplay prompt={prompt} />
                 </Grid>
               </Grid>
+              <IncreaseBountyForm prompt={prompt} />
               <Typography color="textSecondary" gutterBottom>
                 {prompt.user}
               </Typography>

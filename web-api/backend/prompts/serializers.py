@@ -13,7 +13,7 @@ class PromptCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['bounty', 'content', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
+        fields = ['askers_cut', 'bounty', 'content', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
         read_only_fields = ['bounty', 'created', 'pk', 'status', 'user']
 
     def create(self, validated_data):
@@ -35,6 +35,11 @@ class PromptCreateSerializer(serializers.ModelSerializer):
         vote_balance.save()
         return prompt
 
+    def validate_askers_cut(self, value):
+        if value > 1.0 or value < 0.0:
+            raise serializers.ValidationError('Askers cut must be between 0 and 1')
+        return value
+
     def validate_bounty(self, value):
         min_bounty = 10
         if value < min_bounty:
@@ -55,7 +60,7 @@ class PromptDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'status', 'pk', 'title', 'user']
+        fields = ['askers_cut', 'answers', 'bounty', 'content', 'created', 'expiration_datetime', 'status', 'pk', 'title', 'user']
         read_only_fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'status', 'pk', 'title', 'user']
 
 
@@ -65,5 +70,5 @@ class PromptListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
-        read_only_fields = ['bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
+        fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
+        read_only_fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']

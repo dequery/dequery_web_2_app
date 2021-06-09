@@ -11,7 +11,7 @@ function PromptEditor(props) {
       editorClassName="demo-editor"
       editorState={props.editorState}
       onEditorStateChange={props.onEditorStateChange}
-      editorStyle={{'minHeight': '200px', 'border': '1px solid black', 'padding': '10px'}}
+      editorStyle={{minHeight: '200px', border: '1px solid black', padding: '10px', borderRadius: '4px'}}
     />
   );
 }
