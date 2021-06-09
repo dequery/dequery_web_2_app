@@ -54,7 +54,7 @@ function About() {
                 Don't go down the rabbit hole alone
               </Typography>
               <Typography className={classes.heroText} align="center" variant="h4" gutterbottom>
-                Dequery uses blockchain to create a decentralized and trustless marketplace for curious minds
+                Dequery uses blockchain to create a decentralized marketplace for curious minds
               </Typography>
             </CardContent>
           </Card>
@@ -71,7 +71,7 @@ function About() {
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                Dequery uses its own token called DEQ to allow users to put bounties on their questions. Once the question expires, DEQ is paid to other users who provided answers. The amount of DEQ each user receives for their answer is based on the weighted number of votes their answer receives.              </Typography>
+                Dequery uses its own token called DEQ to allow users to put bounties on their questions. Once the question expires, DEQ is paid to other users who provided answers. The amount of DEQ each user receives for their answer is based on the weighted number of votes their answer receives.</Typography>
             </AccordionDetails>
           </Accordion>
 
