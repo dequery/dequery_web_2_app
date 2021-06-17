@@ -16,6 +16,7 @@ class Prompt(models.Model):
     content = models.JSONField()
     created = models.DateTimeField(auto_now_add=True)
     expiration_datetime = models.DateTimeField()
+    hidden_code = models.CharField(max_length=32, default='')
     title = models.CharField(max_length=210)
     user = models.ForeignKey(User, related_name='prompts', on_delete=models.CASCADE)
     status = models.CharField(max_length=64, choices=PROMPT_STATUS_CHOICES, default=PROMPT_STATUS_CHOICES.ACTIVE)

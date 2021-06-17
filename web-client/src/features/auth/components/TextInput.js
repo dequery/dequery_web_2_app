@@ -20,7 +20,7 @@ function TextInput(props) {
   }
 
   return (
-    <FormControl fullWidth variant="filled">
+    <FormControl className={props.className} fullWidth={props.fullWidth ? props.fullWidth : true} variant="filled">
       <Controller
         name={props.name}
         control={props.control}

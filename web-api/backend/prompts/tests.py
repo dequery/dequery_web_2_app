@@ -34,7 +34,7 @@ class PromptTests(TestCase):
         }, format='json')
         return response
 
-    def _api_create_prompt(self, user, bounty, askers_cut=None, expiration_datetime=None):
+    def _api_create_prompt(self, user, bounty, hidden_code=None, askers_cut=None, expiration_datetime=None):
         if not expiration_datetime:
             expiration_datetime = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
         client.force_authenticate(user=user)
@@ -45,6 +45,8 @@ class PromptTests(TestCase):
             'title': 'test',
             'user': user.pk,
             }
+        if hidden_code:
+            body['hidden_code'] = hidden_code
         if askers_cut:
             body['askers_cut'] = askers_cut
         response = client.post('/api/prompts/create/', body, format='json')
@@ -89,6 +91,13 @@ class PromptTests(TestCase):
         prompt.status = PROMPT_STATUS_CHOICES.CLOSING
         prompt.save(update_fields=['status'])
         return prompt, answers
+
+    def _api_retrieve_prompts(self, hidden_code=None):
+        if hidden_code:
+            response = client.get(f'/api/prompts/?hidden_code={hidden_code}')
+        else:
+            response = client.get('/api/prompts/')
+        return response
 
     def test_user_matches(self):
         self.assertEqual(self.user.pk, self.prompt.user.pk)
@@ -327,3 +336,46 @@ class PromptTests(TestCase):
         self.assertEqual(201, response.status_code)
         vote_balance.refresh_from_db()
         self.assertEqual(500, vote_balance.amount)
+
+    def test_retrieve_prompts(self):
+        amount = 300
+        DeqTransactionFactory(user=self.user, amount=amount)
+        response = self._api_create_prompt(self.user, amount)
+        self.assertEqual(201, response.status_code)
+        DeqTransactionFactory(user=self.user, amount=amount)
+        hidden_code = 'Caesar'
+        response = self._api_create_prompt(self.user, amount, hidden_code=hidden_code)
+        self.assertEqual(201, response.status_code)
+
+        # it retrieves prompts without hidden code by default
+        response = self._api_retrieve_prompts()
+        self.assertEqual(200, response.status_code)
+        self.assertGreaterEqual(len(response.json()['results']), 1)
+        for prompt in response.json()['results']:
+            self.assertTrue('' == prompt['hidden_code'])
+
+        # it only retrieves prompt with hidden code when provided
+        response = self._api_retrieve_prompts(hidden_code=hidden_code)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(1, len(response.json()['results']))
+        for prompt in response.json()['results']:
+            self.assertTrue(hidden_code, prompt['hidden_code'])
+
+        # it retrieves all prompts with matching hidden code
+        DeqTransactionFactory(user=self.user, amount=amount)
+        response = self._api_create_prompt(self.user, amount, hidden_code=hidden_code)
+        response = self._api_retrieve_prompts(hidden_code=hidden_code)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(2, len(response.json()['results']))
+        for prompt in response.json()['results']:
+            self.assertTrue(hidden_code, prompt['hidden_code'])
+
+        # it doesn't retrieve prompts with a non-matching hidden code
+        DeqTransactionFactory(user=self.user, amount=amount)
+        hidden_code_2 = 'Shugborough'
+        response = self._api_create_prompt(self.user, amount, hidden_code=hidden_code_2)
+        response = self._api_retrieve_prompts(hidden_code=hidden_code)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(2, len(response.json()['results']))
+        for prompt in response.json()['results']:
+            self.assertTrue(hidden_code, prompt['hidden_code'])

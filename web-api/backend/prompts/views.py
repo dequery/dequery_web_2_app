@@ -18,6 +18,9 @@ class PromptDetail(generics.RetrieveAPIView):
 
 
 class PromptList(generics.ListAPIView):
-    queryset = Prompt.objects.all().order_by('status', 'expiration_datetime')
     serializer_class = PromptListSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        hidden_code = self.request.query_params.get('hidden_code', '')
+        return Prompt.objects.filter(hidden_code=hidden_code).order_by('status', 'expiration_datetime')

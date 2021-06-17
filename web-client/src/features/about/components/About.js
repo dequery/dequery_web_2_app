@@ -24,9 +24,12 @@ const useStyles = makeStyles((theme) => ({
   },
   fullContainer: {
     backgroundColor: 'black',
+    boxSizing: 'border-box',
     marginTop: '-40px',
     paddingBottom: '40px',
     marginBottom: '-20px',
+    minWidth: '100vw',
+    minHeight: '100vh',
   },
 }));
 

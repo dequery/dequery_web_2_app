@@ -13,7 +13,7 @@ class PromptCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['askers_cut', 'bounty', 'content', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
+        fields = ['askers_cut', 'bounty', 'content', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user']
         read_only_fields = ['bounty', 'created', 'pk', 'status', 'user']
 
     def create(self, validated_data):
@@ -60,7 +60,7 @@ class PromptDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['askers_cut', 'answers', 'bounty', 'content', 'created', 'expiration_datetime', 'status', 'pk', 'title', 'user']
+        fields = ['askers_cut', 'answers', 'bounty', 'content', 'created', 'expiration_datetime', 'hidden_code', 'status', 'pk', 'title', 'user']
         read_only_fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'status', 'pk', 'title', 'user']
 
 
@@ -70,5 +70,5 @@ class PromptListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
+        fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user']
         read_only_fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']

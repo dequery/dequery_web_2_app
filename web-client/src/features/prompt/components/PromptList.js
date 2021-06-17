@@ -8,8 +8,10 @@ import { selectUser } from 'features/auth/authSlice';
 import PlainLink from 'features/topnav/components/PlainLink';
 import PromptCard from 'features/prompt/components/PromptCard';
 
+import CreateIcon from '@material-ui/icons/Create';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import Fab from '@material-ui/core/Fab';
 import Grid from '@material-ui/core/Grid';
 
 
@@ -33,7 +35,7 @@ function PromptList() {
   }, [dispatch]);
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" style={{flexGrow: 1}}>
       <Grid
         alignItems="center"
         container
@@ -43,11 +45,13 @@ function PromptList() {
       >
         <Grid item xs={12}>
           <PlainLink to='/prompts/create'>
-            <Button className={classes.topButton} disabled={Object.keys(user).length === 0} variant="contained" color="primary">Create Prompt</Button>
+            <Fab className={classes.topButton} disabled={Object.keys(user).length === 0} color="primary">
+              <CreateIcon />
+            </Fab>
           </PlainLink>
 
           <PlainLink to='/about'>
-            <Button className={classes.topButton} color="secondary" variant="contained">Learn How Dequery Works</Button>
+            <Button className={classes.topButton} color="secondary" variant="contained">Learn More</Button>
           </PlainLink>
         </Grid>
         {promptList.results.map((prompt, i) => {

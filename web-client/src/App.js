@@ -14,7 +14,7 @@ import CreatePromptForm from 'features/prompt/components/CreatePromptForm';
 import EthCashoutForm from 'features/profile/components/EthCashoutForm';
 import LoginForm from 'features/auth/components/LoginForm';
 import PromptDetail from 'features/prompt/components/PromptDetail';
-import PromptList from 'features/prompt/components/PromptList';
+import PromptTabs from 'features/prompt/components/PromptTabs';
 import Profile from 'features/profile/components/Profile';
 import ResetPasswordForm from 'features/auth/components/ResetPasswordForm';
 import SignupForm from 'features/auth/components/SignupForm';
@@ -77,7 +77,7 @@ function App() {
             <Route exact path="/prompts/:promptPk" component={PromptDetail} />
             <Route exact path="/reset-password/:resetPasswordCode" component={ResetPasswordForm} />
             <Route exact path="/signup" component={SignupForm} />
-            <Route exact path="/" component={PromptList} />
+            <Route exact path="/" component={PromptTabs} />
             <Redirect to="/" />
           </Switch>
         </Grid>

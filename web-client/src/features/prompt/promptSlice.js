@@ -4,11 +4,14 @@ import dequeryClient from 'dequeryClient';
 
 const initialState = {
   respError: {},
+  respErrorHiddenList: {},
   increaseBountyRespError: {},
   isFetching: false,
+  isFetchingHiddenList: false,
   promptDetail: {},
   promptCreated: {},
   promptList: { results: [] },
+  promptHiddenList: { results: [] },
 }
 
 export const createAnswer = createAsyncThunk(
@@ -24,11 +27,11 @@ export const createAnswer = createAsyncThunk(
 
 export const createPrompt = createAsyncThunk(
   'prompt/submitPrompt',
-  async ({ askersCut, bounty, content, expirationDatetime, title }, thunkAPI) => dequeryClient(
+  async ({ askersCut, bounty, content, expirationDatetime, hiddenCode, title }, thunkAPI) => dequeryClient(
     '/api/prompts/create/',
     'POST',
     thunkAPI,
-    { askers_cut: askersCut, bounty, content, expiration_datetime: expirationDatetime, title },
+    { askers_cut: askersCut, bounty, content, expiration_datetime: expirationDatetime, hidden_code: hiddenCode, title },
     true
   )
 );
@@ -48,6 +51,15 @@ export const listPrompts = createAsyncThunk(
   'prompt/listPrompts',
   async (_, thunkAPI) => dequeryClient(
     '/api/prompts/',
+    'GET',
+    thunkAPI,
+  )
+);
+
+export const listHiddenPrompts = createAsyncThunk(
+  'prompt/listHiddenPrompts',
+  async ({ hiddenCode }, thunkAPI) => dequeryClient(
+    `/api/prompts/?hidden_code=${hiddenCode}`,
     'GET',
     thunkAPI,
   )
@@ -74,6 +86,7 @@ export const promptSlice = createSlice({
     },
     clearPromptList: (state) => {
       state.promptList = initialState.promptList;
+      state.promptHiddenList = initialState.promptHiddenList;
     }
   },
   extraReducers: (builder) => {
@@ -126,6 +139,18 @@ export const promptSlice = createSlice({
         state.isFetching = false;
         state.respError = action.payload;
       })
+      .addCase(listHiddenPrompts.pending, (state) => {
+        state.isFetchingHiddenList = true;
+        state.respErrorHiddenList = initialState.respErrorHiddenList;
+      })
+      .addCase(listHiddenPrompts.fulfilled, (state, action) => {
+        state.isFetchingHiddenList = false;
+        state.promptHiddenList = action.payload;
+      })
+      .addCase(listHiddenPrompts.rejected, (state, action) => {
+        state.isFetchingHiddenList = false;
+        state.respErrorHiddenList = action.payload;
+      })
       .addCase(retrievePrompt.pending, (state) => {
         state.isFetching = true;
         state.respError = initialState.respError;
@@ -144,10 +169,14 @@ export const promptSlice = createSlice({
 export const { clearPromptDetail, clearPromptList, clearPromptCreated } = promptSlice.actions;
 
 export const selectIsFetching = (state) => state.prompt.isFetching;
+export const selectIsFetchingHiddenList = (state) => state.prompt.isFetchingHiddenList;
 export const selectIncreaseBountyRespError = (state) => state.prompt.increaseBountyRespError;
 export const selectPromptCreated = (state) => state.prompt.promptCreated;
 export const selectPromptList = (state) => state.prompt.promptList;
+export const selectPromptHiddenList = (state) => state.prompt.promptHiddenList;
 export const selectPromptDetail = (state) => state.prompt.promptDetail;
 export const selectRespError = (state) => state.prompt.respError;
+export const selectRespErrorHiddenList = (state) => state.prompt.respErrorHiddenList;
+
 
 export default promptSlice.reducer;

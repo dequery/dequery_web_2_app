@@ -61,7 +61,7 @@ function CreatePromptForm() {
         <CardContent>
           <form onSubmit={handleSubmit((data) => onSubmitCreate(data, editorState))}>
             <Grid
-              alignItems="center"
+              alignItems="top"
               container
               direction="row"
               justify="center"
@@ -101,7 +101,7 @@ function CreatePromptForm() {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} md={4}>
                 <TextInput
                   name="bounty"
                   control={control}
@@ -115,7 +115,7 @@ function CreatePromptForm() {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} md={4}>
                 <TextInput
                   name="askersCut"
                   control={control}
@@ -127,7 +127,20 @@ function CreatePromptForm() {
                 />
               </Grid>
 
-              <PromptEditor onEditorStateChange={setEditorState} editorState={editorState} />
+              <Grid item xs={12} md={4}>
+                <TextInput
+                  name="hiddenCode"
+                  control={control}
+                  inputId="hiddenCode"
+                  fieldErrorMessage={respError.hidden_code}
+                  label="Hidden code"
+                  helperText="Optional code used to hide prompt"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <PromptEditor onEditorStateChange={setEditorState} editorState={editorState} />
+              </Grid>
 
               <Grid item className={classes.centeredGrid} xs={12}>
                 <Button disabled={isFetching} variant="contained" color="primary" type="submit">
