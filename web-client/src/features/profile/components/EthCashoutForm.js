@@ -135,6 +135,7 @@ function EthCashoutForm() {
               <Grid className={classes.centeredGrid} item xs={12}>
                 <Typography variant="body1">Convert {watchAmount || '0'} DEQ to {watchAmount || '0'} {usePaypal ? 'USD' : 'DAI'}</Typography>
                 <Typography variant="body2">An email will be sent once the transaction is confirmed</Typography>
+                <Typography variant="subtitle2">Note: Keeping in app DEQ will allow you to partipate in the ICO later this year</Typography>
               </Grid>
 
               <Grid item className={classes.centeredGrid} xs={12}>
