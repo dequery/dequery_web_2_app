@@ -1,8 +1,10 @@
+import re
+
 from cryptoaddress import EthereumAddress
 from rest_framework import serializers
 
 from backend.prompts.models import Prompt
-from backend.transactions.constants import ETH_GAS_FEE, TRANSACTION_CATEGORY_CHOICES, TRANSACTION_STATUS_CHOICES, VALID_API_CATEGORIES
+from backend.transactions.constants import ETH_GAS_FEE, TRANSACTION_CATEGORY_CHOICES, TRANSACTION_STATUS_CHOICES, VALID_API_CATEGORIES, REQUIRES_PROCESSING_CATEGORIES
 from backend.transactions.models import DeqTransaction
 from backend.votes.models import VoteBalance
 
@@ -29,12 +31,21 @@ class DeqTransactionCreateSerializer(serializers.ModelSerializer):
 
     def _validate_extra_info(self, validated_data):
         category = validated_data['category']
-        if category == TRANSACTION_CATEGORY_CHOICES.TO_ETH:
+        if category == TRANSACTION_CATEGORY_CHOICES.TO_ETH or category == TRANSACTION_CATEGORY_CHOICES.TO_DAI:
             try:
                 eth_address = validated_data['extra_info']['ethereum_address']
                 EthereumAddress(eth_address)
             except:
                 raise serializers.ValidationError('A valid eth address was not provided')
+        elif category == TRANSACTION_CATEGORY_CHOICES.TO_USD:
+            try:
+                regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+                email = validated_data['extra_info']['paypal_email']
+                valid = re.search(regex, email)
+                if not valid:
+                    raise
+            except:
+                raise serializers.ValidationError('A valid email was not provided')
         elif category == TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY:
             try:
                 prompt = Prompt.objects.get(pk=validated_data['extra_info']['prompt'])
@@ -51,6 +62,10 @@ class DeqTransactionCreateSerializer(serializers.ModelSerializer):
             remaining_balance = float(validated_data['user'].deq_balance) - float(validated_data['amount']) - gas_fee_deq
             if remaining_balance < 0:
                 raise serializers.ValidationError('Not enough DEQ to make transaction')
+        elif category == TRANSACTION_CATEGORY_CHOICES.TO_DAI or category == TRANSACTION_CATEGORY_CHOICES.TO_USD:
+            remaining_balance = float(validated_data['user'].deq_balance) - float(validated_data['amount'])
+            if remaining_balance < 0:
+                raise serializers.ValidationError('Not enough DEQ to make transaction')
         elif category == TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY:
             remaining_balance = float(validated_data['user'].deq_balance) - float(validated_data['amount'])
             if remaining_balance < 0:
@@ -59,7 +74,7 @@ class DeqTransactionCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         category = validated_data['category']
-        if category == TRANSACTION_CATEGORY_CHOICES.TO_ETH:
+        if category in REQUIRES_PROCESSING_CATEGORIES:
             validated_data['status'] = TRANSACTION_STATUS_CHOICES.PROCCESSING
         elif category == TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY:
             try:  # add to existing vote balance for this user and prompt

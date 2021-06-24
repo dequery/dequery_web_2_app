@@ -45,7 +45,7 @@ function Profile() {
       <Grid className={classes.centeredGrid} item xs={12}>
         <Button variant="contained" color="secondary">
           <PlainLink to="/deq-to-eth">
-            Convert DEQ to ETH
+            Exchange DEQ
           </PlainLink>
         </Button>
       </Grid>

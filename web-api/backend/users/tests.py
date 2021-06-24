@@ -21,6 +21,12 @@ class DeqTransactionTests(TestCase):
         }, format='json')
         return response
 
+    def _api_refresh_token(self, refresh_token):
+        response = client.post('/api/token/refresh/', {
+            'refresh': refresh_token,
+        }, format='json')
+        return response
+
     def _api_signup(self, display_name, email, password, signup_code=None):
         body = {
             'display_name': display_name,
@@ -81,3 +87,8 @@ class DeqTransactionTests(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTrue(response.json()['refresh'])
         self.assertTrue(response.json()['access'])
+
+        # refresh token works
+        refresh_token = response.json()['refresh']
+        response = self._api_refresh_token(refresh_token)
+        self.assertEqual(200, response.status_code)

@@ -2,6 +2,8 @@ import Cookies from 'js-cookie'
 
 
 async function retrieveAccessToken() {
+  const refreshToken = Cookies.get('refreshToken');
+  debugger
   const refreshResponse = await fetch(
     `${process.env.REACT_APP_DEQUERY_API_BASE}/api/token/refresh/`,
     {

@@ -25,7 +25,7 @@ function TransactionTable(props) {
   }, [dispatch]);
 
   const renderAmount = (transaction) => {
-    const spending_categories = ['to_eth', 'to_prompt_bounty'];
+    const spending_categories = ['to_eth', 'to_usd', 'to_dai', 'to_prompt_bounty', 'increase_prompt_bounty'];
     const amount = Number.parseFloat(transaction.amount).toFixed(4);
     if (spending_categories.includes(transaction.category)) {
       return `-${amount}`;
@@ -39,23 +39,27 @@ function TransactionTable(props) {
 
   const renderCategory = (transaction) => {
     const display_mapping = {
+      from_askers_cut: "From asker's cut",
       from_answer: 'From upvoted answer',
       from_prompt_added_bounty: 'From prompt bounty increase',
       from_source: 'Gifted',
       from_expired_prompt: 'Refund from unanswered prompt',
-      to_eth: 'Cashed out for ETH',
+      increase_prompt_bounty: 'Increased prompt bounty',
+      to_eth: 'Exchanged for ETH',
+      to_usd: 'Exchanged for USD',
+      to_dai: 'Exchanged for DAI',
       to_prompt_bounty: 'To prompt bounty'
     }
     return display_mapping[transaction.category];
   }
 
   const renderData = (transaction) => {
-    if (['from_answer', 'from_prompt_added_bounty', 'from_expired_prompt', 'to_prompt_bounty'].includes(transaction.category)) {
+    if (['from_answer', 'from_prompt_added_bounty', 'from_expired_prompt', 'increase_prompt_bounty', 'to_prompt_bounty'].includes(transaction.category)) {
       const promptPk = transaction.extra_info['prompt'];
       return (
         <Link to={`/prompts/${promptPk}`}>Prompt {promptPk}</Link>
       );
-    } else if (transaction.category === 'to_eth') {
+    } else if (transaction.category === 'to_eth' || transaction.category === 'to_dai') {
       const showTransactionLink = transaction.extra_info && transaction.extra_info.tx_hash;
       return (
         <div>
@@ -64,6 +68,8 @@ function TransactionTable(props) {
           {showTransactionLink && <a href={`https://etherscan.io/tx/${transaction.extra_info.tx_hash}`}>Tx Hash</a>}
         </div>
       );
+    } else if (transaction.category === 'to_usd') {
+      return `Paypal email: ${transaction.extra_info.paypal_email}`;
     }
     return '';
   }
