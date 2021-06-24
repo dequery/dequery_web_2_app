@@ -4,7 +4,7 @@ from rest_framework import generics, mixins, permissions, views
 from rest_framework.response import Response
 
 from backend.users.serializers import AlphaRequestSerializer, UserCreateSerializer, UserDetailSerializer
-from backend.users.models import AlphaCode, AlphaRequest, ResetPasswordCode
+from backend.users.models import AlphaRequest, ResetPasswordCode
 
 
 User = get_user_model()

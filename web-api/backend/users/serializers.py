@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from backend.users.models import AlphaCode, AlphaRequest
+from backend.users.models import AlphaRequest, SignupCode
 from backend.transactions.models import DeqTransaction
 from backend.transactions.constants import TRANSACTION_CATEGORY_CHOICES
 
@@ -18,29 +18,32 @@ class AlphaRequestSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    alpha_passcode = serializers.CharField(max_length=12, write_only=True)
+    signup_code = serializers.CharField(required=False, max_length=12, write_only=True)
 
     class Meta:
         model = User
-        fields = ['alpha_passcode', 'display_name', 'email', 'pk', 'password']
+        fields = ['display_name', 'email', 'pk', 'password', 'signup_code']
         read_only_fields = ['created', 'pk', 'deq_balance']
         extra_kwargs = {
             'password': {'write_only': True}
         }
 
-    def _validate_alpha_passcode(self, validated_data):
+    def _validate_signup_code(self, validated_data):
         try:
-            alpha_code = AlphaCode.objects.get(code=validated_data['alpha_passcode'])
+            signup_code = SignupCode.objects.get(code=validated_data['signup_code'])
         except:
-            raise serializers.ValidationError('Not a valid passcode')
+            raise serializers.ValidationError('Not a valid code')
 
-        if alpha_code.use_count - alpha_code.used - 1 < 0:
-            raise serializers.ValidationError('Passcode already used')
-        return alpha_code
+        if signup_code.use_count - signup_code.used - 1 < 0:
+            raise serializers.ValidationError('Code already used')
+        return signup_code
 
     def validate(self, validated_data):
-        alpha_code = self._validate_alpha_passcode(validated_data)
-        validated_data['alpha_passcode'] = alpha_code
+        if validated_data.get('signup_code'):
+            signup_code = self._validate_signup_code(validated_data)
+        else:
+            signup_code = None
+        validated_data['signup_code'] = signup_code
         return validated_data
 
     def create(self, validated_data):
@@ -49,13 +52,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
             validated_data['email'],
             validated_data['password']
             )
-        alpha_code = validated_data['alpha_passcode']
-        alpha_code.used += 1
-        alpha_code.save(update_fields=['used'])
 
-        if alpha_code.endowment > 0:
+        signup_code = validated_data['signup_code']
+        if signup_code:
+            signup_code.used += 1
+            signup_code.save(update_fields=['used'])
             deq_transaction = DeqTransaction.objects.create(
-                amount=alpha_code.endowment,
+                amount=signup_code.endowment,
                 category=TRANSACTION_CATEGORY_CHOICES.FROM_SOURCE,
                 user=user,
             )

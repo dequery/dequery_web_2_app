@@ -3,10 +3,10 @@ import { Redirect } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { useLocation } from 'react-router-dom';
 
 import { signup, selectIsFetching, selectRespError, selectUser, selectUserCreated } from 'features/auth/authSlice';
 
-import PlainLink from 'features/topnav/components/PlainLink';
 import TextInput from 'features/auth/components/TextInput';
 
 import Alert from '@material-ui/lab/Alert';
@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 function SignupForm() {
   const dispatch = useDispatch();
   const isFetching = useSelector(selectIsFetching);
@@ -33,6 +37,8 @@ function SignupForm() {
   const nonFieldError = respError.detail;
   const classes = useStyles();
   const { handleSubmit, control } = useForm();
+  const query = useQuery();
+  console.log(query.get("code"));
 
   const onSubmitSignup = data => {
     dispatch(signup(data));
@@ -63,12 +69,6 @@ function SignupForm() {
                 <Typography align="center" variant="h3">Signup</Typography>
               </Grid>
 
-              <Grid item xs={12}>
-                <Typography align="center" variant="body1">
-                  <PlainLink to="/alpharequest">Request Alpha Passcode</PlainLink>
-                </Typography>
-              </Grid>
-
               {nonFieldError && (
                 <Grid item xs={12}>
                   <Alert severity="error">{nonFieldError}</Alert>
@@ -81,7 +81,7 @@ function SignupForm() {
                   control={control}
                   inputId="displayName"
                   fieldErrorMessage={respError.display_name}
-                  label="Display Name"
+                  label="Display name"
                   rules={{
                     required: 'Required'
                   }}
@@ -117,14 +117,12 @@ function SignupForm() {
 
               <Grid item xs={12}>
                 <TextInput
-                  name="alphaPasscode"
+                  name="signupCode"
+                  defaultValue={query.get('code')}
                   control={control}
-                  inputId="alphaPasscode"
-                  fieldErrorMessage={respError.alpha_passcode}
-                  label="Alpha Passcode"
-                  rules={{
-                    required: 'Required'
-                  }}
+                  inputId="signupCode"
+                  fieldErrorMessage={respError.signup_code}
+                  label="Signup code (optional)"
                 />
               </Grid>
 

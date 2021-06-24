@@ -35,11 +35,11 @@ export const login = createAsyncThunk(
 
 export const signup = createAsyncThunk(
   'auth/signup',
-  async ({ alphaPasscode, displayName, email, password }, thunkAPI) => dequeryClient(
+  async ({ displayName, email, password, signupCode }, thunkAPI) => dequeryClient(
     '/api/users/create/',
     'POST',
     thunkAPI,
-    { alpha_passcode: alphaPasscode, display_name: displayName, email, password }
+    { display_name: displayName, email, password, signup_code: signupCode }
   )
 );
 

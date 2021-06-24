@@ -8,7 +8,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import About from 'features/about/components/About';
-import AlphaRequestForm from 'features/auth/components/AlphaRequestForm';
 import CookieLogin from 'features/auth/components/CookieLogin';
 import CreatePromptForm from 'features/prompt/components/CreatePromptForm';
 import EthCashoutForm from 'features/profile/components/EthCashoutForm';
@@ -69,7 +68,6 @@ function App() {
         >
           <Switch>
             <Route exact path="/about" component={About} />
-            <Route exact path="/alpharequest" component={AlphaRequestForm} />
             <Route exact path="/deq-to-eth" component={EthCashoutForm} />
             <Route exact path="/login" component={LoginForm} />
             <Route exact path="/profile" component={Profile} />
