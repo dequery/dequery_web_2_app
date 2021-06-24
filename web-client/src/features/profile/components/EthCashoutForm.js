@@ -34,7 +34,7 @@ function EthCashoutForm() {
   const transactionCreated = useSelector(selectTransactionCreated);
   const { handleSubmit, control, watch } = useForm();
   const watchAmount = watch('amount');
-  const [usePaypal, usePaypalState] = useState(false);
+  const [usePaypal, setPaypalState] = useState(false);
 
   useEffect(() => {
     dispatch(clearTransactionCreated());
@@ -99,7 +99,7 @@ function EthCashoutForm() {
                 Ethereum
                 <Switch
                   checked={usePaypal}
-                  onChange={usePaypalState}
+                  onChange={() => setPaypalState(!usePaypal)}
                   name="usePaypal"
                   color="secondary"
                 />
