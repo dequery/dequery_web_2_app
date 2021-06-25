@@ -18,7 +18,7 @@ class AlphaRequestSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    signup_code = serializers.CharField(allow_blank=True, required=False, max_length=12, write_only=True)
+    signup_code = serializers.CharField(allow_blank=True, required=False, max_length=16, write_only=True)
 
     class Meta:
         model = User
