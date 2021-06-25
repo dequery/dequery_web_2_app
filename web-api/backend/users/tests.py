@@ -52,10 +52,17 @@ class DeqTransactionTests(TestCase):
         self.assertEqual(email_1, user.email)
         self.assertEqual(endowment, user.deq_balance)
 
-        # it works for a second user
+        # it fails if password is too short
         display_name_2 = 'user2'
         email_2 = 'user2@hotmail.com'
-        response = self._api_signup(display_name_2, email_2, 'testpass123', signup_code=signup_code)
+        short_password = '12a'
+        response = self._api_signup(display_name_2, email_2, short_password, signup_code=signup_code)
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('Password must be at least 6 characters', response.json()['password'][0])
+
+        # it works for a second user
+        valid_password = '123456'
+        response = self._api_signup(display_name_2, email_2, valid_password, signup_code=signup_code)
         self.assertEqual(201, response.status_code)
         user = User.objects.get(pk=response.json()['pk'])
         self.assertEqual(display_name_2, user.display_name)
@@ -92,3 +99,4 @@ class DeqTransactionTests(TestCase):
         refresh_token = response.json()['refresh']
         response = self._api_refresh_token(refresh_token)
         self.assertEqual(200, response.status_code)
+    

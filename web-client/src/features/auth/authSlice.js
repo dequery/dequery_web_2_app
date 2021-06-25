@@ -84,6 +84,9 @@ export const authSlice = createSlice({
       state.respError = initialState.respError;
       state.user = initialState.user;
     },
+    setPasswordMismatchError: (state) => {
+      state.respError.password = ['Passwords do not match'];
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -135,7 +138,7 @@ export const authSlice = createSlice({
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.isFetching = false;
-        state.respError = action.payload;
+        state.respError = JSON.parse(action.payload.detail);
       })
       .addCase(signup.pending, (state) => {
         state.isFetching = true;
@@ -147,12 +150,12 @@ export const authSlice = createSlice({
       })
       .addCase(signup.rejected, (state, action) => {
         state.isFetching = false;
-        state.respError = action.payload;
+        state.respError = JSON.parse(action.payload.detail);
       })
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setPasswordMismatchError } = authSlice.actions;
 
 export const selectAlphaRequestSuccess = (state) => state.auth.alphaRequestSuccess;
 export const selectIsFetching = (state) => state.auth.isFetching;

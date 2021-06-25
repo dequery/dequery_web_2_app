@@ -84,11 +84,11 @@ function About() {
               aria-controls="panel2a-content"
               id="panel2a-header"
             >
-              <Typography className={classes.heading}>Why doesn't Dequery payout in USD, BTC or ETH?</Typography>
+              <Typography className={classes.heading}>Why doesn't Dequery payout directly in USD, BTC or ETH?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                Dequery aims to tie the value of DEQ as directly as possible to the value the community provides by creating useful questions and answers. Using another currency for bounties would put a large portion of the bounties value outside of the Dapp's control.
+                Dequery aims to tie the value of DEQ as directly as possible to the value the community provides by creating useful questions and answers. Using another currency for bounties would put a large portion of the bounties value outside of the Dapp's community.
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -103,7 +103,7 @@ function About() {
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                Dequery currently runs on a centralized server during the alpha phase in order to hone the user experience and game theory without gas fees. DEQ plans to launch as an ERC-20 token on the Ethereum network. The alpha phase does allow users to request to pay out DEQ for ETH at a 10,000 DEQ to 0.1 ETH ratio. On-chain DEQ will also get paid out to all participating alpha users.              </Typography>
+                Dequery currently runs on a centralized server during the alpha phase in order to hone the community experience and game theory without gas fees. DEQ plans to launch as an ERC-20 token on the Ethereum network. The beta phase does allow users to request to pay out DEQ for DAI or USD at a 1 to 1 ratio. In app DEQ will convert to on-chain DEQ during the ICO.</Typography>
             </AccordionDetails>
           </Accordion>
 
@@ -117,7 +117,7 @@ function About() {
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                Use <Link to="/alpharequest">this form</Link> to request alpha access.
+                Sign up <Link to="/signup"> here</Link>.
               </Typography>
             </AccordionDetails>
           </Accordion>

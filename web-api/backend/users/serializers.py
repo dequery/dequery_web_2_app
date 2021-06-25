@@ -18,7 +18,7 @@ class AlphaRequestSerializer(serializers.ModelSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    signup_code = serializers.CharField(required=False, max_length=12, write_only=True)
+    signup_code = serializers.CharField(allow_blank=True, required=False, max_length=12, write_only=True)
 
     class Meta:
         model = User
@@ -45,6 +45,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
             signup_code = None
         validated_data['signup_code'] = signup_code
         return validated_data
+
+    def validate_password(self, value):
+        if len(value) < 6:
+            raise serializers.ValidationError('Password must be at least 6 characters')
+        return value
 
     def create(self, validated_data):
         user = User.objects.create_user(

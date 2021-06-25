@@ -83,7 +83,7 @@ function CreatePromptForm() {
                   control={control}
                   inputId="title"
                   fieldErrorMessage={respError.title}
-                  label="title"
+                  label="Title"
                   rules={{
                     required: 'Required'
                   }}
@@ -124,6 +124,7 @@ function CreatePromptForm() {
                   label="Askers cut"
                   type="number"
                   defaultValue={0.1}
+                  helperText="Cut earned when another user adds to prompt's bounty (0 to 1)"
                 />
               </Grid>
 
@@ -133,8 +134,8 @@ function CreatePromptForm() {
                   control={control}
                   inputId="hiddenCode"
                   fieldErrorMessage={respError.hidden_code}
-                  label="Hidden code"
-                  helperText="Optional code used to hide prompt"
+                  label="Hidden code (optional)"
+                  helperText="Optional code used to hide prompt from public"
                 />
               </Grid>
 

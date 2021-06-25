@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation } from 'react-router-dom';
 
-import { signup, selectIsFetching, selectRespError, selectUser, selectUserCreated } from 'features/auth/authSlice';
+import { signup, selectIsFetching, selectRespError, selectUser, selectUserCreated, setPasswordMismatchError } from 'features/auth/authSlice';
 
 import TextInput from 'features/auth/components/TextInput';
 
@@ -34,14 +34,18 @@ function SignupForm() {
   const user = useSelector(selectUser);
   const userCreated = useSelector(selectUserCreated);
   const respError = useSelector(selectRespError);
-  const nonFieldError = respError.detail;
+  const nonFieldError = respError.non_field_errors;
   const classes = useStyles();
   const { handleSubmit, control } = useForm();
   const query = useQuery();
-  console.log(query.get("code"));
 
   const onSubmitSignup = data => {
-    dispatch(signup(data));
+    if (data.password !== data.confirmPassword) {
+      dispatch(setPasswordMismatchError());
+    } else {
+      delete data.confirmPassword;
+      dispatch(signup(data));
+    }
   };
 
   if (Object.keys(user) === 0) {
@@ -51,7 +55,6 @@ function SignupForm() {
   if (userCreated) {
     return <Redirect to="/login" />;
   }
-
 
   return (
     <Container maxWidth="sm">
@@ -82,6 +85,7 @@ function SignupForm() {
                   inputId="displayName"
                   fieldErrorMessage={respError.display_name}
                   label="Display name"
+                  helperText="The name other users will see, can be a pseudonym"
                   rules={{
                     required: 'Required'
                   }}
@@ -108,6 +112,20 @@ function SignupForm() {
                   inputId="password"
                   fieldErrorMessage={respError.password}
                   label="Password"
+                  rules={{
+                    required: 'Required'
+                  }}
+                  type="password"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  name="confirmPassword"
+                  control={control}
+                  inputId="confirmPassword"
+                  fieldErrorMessage={respError.password}
+                  label="Confirm Password"
                   rules={{
                     required: 'Required'
                   }}

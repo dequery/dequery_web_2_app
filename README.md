@@ -77,6 +77,17 @@
     [x] enough balance (include gas if TO_ETH)
     [x] add enough data to extra
 
+## Foresight Launch
+[x] Switch cashout to DAI or Paypal
+[] password min 6 charecters
+[] confirm password twice
+[] put in user name after re-route
+[] answer time linkedin post
+[] add more helper texts
+[] update about page
+[] better helper text
+[] create example video
+
 
 
 [] Announce in Bankless shill your project
@@ -89,7 +100,7 @@
 [x] Marketing FAQ
 [x] Make pretty
 [x] test auth/tokens on app render logout if needed
-[] asker's cut backend
+[x] asker's cut backend
 [] Email confirmation of account
 [] Add Tags
 [] Filter or Sort prompts
@@ -99,12 +110,12 @@
 [] Save Prompt as draft
 [] Save Answer as draft
 [x] Unit tests
-[] Remove Alpha Passcode
+[x] Remove Alpha Passcode
 
 ### Bugs to Fix
 [x] fix refresh not loading app
 [x] No error is shown if prompt title is too long
 [] fix field erros showing up as dict general errors
-[] Pagination of DRF is only 15 for prompt list
+[x] Pagination of DRF is only 15 for prompt list
 [] Double check error handling on form submissions
 [] Double check Asnc buttons disable while fetching
