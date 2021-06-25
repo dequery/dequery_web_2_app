@@ -46,6 +46,10 @@ function PromptDetail(props) {
     return <LinearProgress />;
   }
 
+  const emptyContent = (content) => {
+    return content.blocks.length === 1 && content.blocks[0].text === '';
+  }
+
   return (
     <Container maxWidth="md">
       <Grid
@@ -75,7 +79,9 @@ function PromptDetail(props) {
               <Typography variant="h5" gutterBottom>
                 {prompt.title}
               </Typography>
-              <PromptDetailContent content={prompt.content} />
+              {!emptyContent(prompt.content) &&
+                <PromptDetailContent content={prompt.content} />
+              }
               <Typography className={classes.topMargin} variant="body2" component="p">
                 {`Submission deadline ${moment(prompt.expiration_datetime).fromNow()}`}
               </Typography>
