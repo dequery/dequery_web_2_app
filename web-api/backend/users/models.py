@@ -107,7 +107,7 @@ class SignupCodeManager(models.Manager):
 
 class SignupCode(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    code = models.CharField(max_length=12, db_index=True, unique=True)
+    code = models.CharField(max_length=16, db_index=True, unique=True)
     use_count = models.IntegerField(default=1)
     used = models.IntegerField(default=0)
     endowment = models.DecimalField(default=0.000000000000000000, max_digits=29, decimal_places=18)
