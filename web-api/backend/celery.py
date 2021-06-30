@@ -25,7 +25,8 @@ app.autodiscover_tasks()
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(30.0, heartbeat.s('world'), expires=20, name='heartbeat')
-    sender.add_periodic_task(30.0, 'backed.prompts.tasks.async_distribute_bounties', expires=20, name='distribute_bounties')
+    sender.add_periodic_task(30.0, 'backend.prompts.tasks.async_distribute_bounties', expires=20, name='distribute_bounties')
+    sender.add_periodic_task(60.0, 'backend.notifications.tasks.async_send_all_new_notifications', expires=20, name='send_all_new_notifications')
 
 
 @app.task(bind=True)

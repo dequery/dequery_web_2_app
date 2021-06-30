@@ -5,7 +5,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useParams } from 'react-router-dom';
 
-import { resetPassword, selectIsFetching, selectRespError, selectUser, selectResetPasswordSuccess } from 'features/auth/authSlice';
+import {
+  resetPassword,
+  selectIsFetching,
+  selectRespError,
+  selectUser,
+  selectResetPasswordSuccess,
+  setNewPasswordMismatchError,
+} from 'features/auth/authSlice';
 
 import TextInput from 'features/auth/components/TextInput';
 
@@ -30,14 +37,20 @@ function ResetPasswordForm() {
   const user = useSelector(selectUser);
   const resetPasswordSuccess = useSelector(selectResetPasswordSuccess);
   const respError = useSelector(selectRespError);
-  const nonFieldError = respError.detail;
+  const nonFieldError = respError.non_field_errors;
   const classes = useStyles();
   const { resetPasswordCode } = useParams()
   const { handleSubmit, control } = useForm();
 
   const onSubmit = (data, resetPasswordCode) => {
     data.resetPasswordCode = resetPasswordCode;
-    dispatch(resetPassword(data));
+
+    if (data.newPassword !== data.confirmNewPassword) {
+      dispatch(setNewPasswordMismatchError());
+    } else {
+      delete data.confirmNewPassword;
+      dispatch(resetPassword(data));
+    }
   };
 
   if (user.pk) {
@@ -66,7 +79,7 @@ function ResetPasswordForm() {
 
               {nonFieldError && (
                 <Grid item xs={12}>
-                  <Alert severity="error">{nonFieldError}</Alert>
+                  <Alert severity="error">{nonFieldError[0]}</Alert>
                 </Grid>
               )}
 
@@ -76,7 +89,21 @@ function ResetPasswordForm() {
                   control={control}
                   inputId="newPassword"
                   fieldErrorMessage={respError.new_password}
-                  label="New Password"
+                  label="New password"
+                  rules={{
+                    required: 'Required'
+                  }}
+                  type="password"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  name="confirmNewPassword"
+                  control={control}
+                  inputId="confirmNewPassword"
+                  fieldErrorMessage={respError.new_password}
+                  label="Confirm new password"
                   rules={{
                     required: 'Required'
                   }}

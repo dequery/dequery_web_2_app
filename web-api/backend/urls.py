@@ -5,12 +5,15 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 from backend.answers.views import AnswerCreate, AnswerDetail, AnswerList
+from backend.notifications.views import RequestResetPassword
 from backend.prompts.views import PromptCreate, PromptDetail, PromptList
 from backend.transactions.views import DeqTransactionCreate, DeqTransacionList
 from backend.users.views import AlphaRequestCreate, UserCreate, UserDetail, RetrieveUserFromToken, ResetPassword
 from backend.votes.views import VoteBalanceDetail, VoteBalanceList, VoteCastCreate
 
+
 router = routers.DefaultRouter()
+
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -19,6 +22,7 @@ urlpatterns = [
     path('api/answers/', AnswerList.as_view(), name='answer_list'),
     path('api/answers/<int:pk>/', AnswerDetail.as_view(), name='answer_detail'),
     path('api/answers/create/', AnswerCreate.as_view(), name='answer_create'),
+    path('api/notifications/reset-password/', RequestResetPassword.as_view(), name='request_reset_password'),
     path('api/prompts/', PromptList.as_view(), name='prompt_list'),
     path('api/prompts/<int:pk>/', PromptDetail.as_view(), name='prompt_detail'),
     path('api/prompts/create/', PromptCreate.as_view(), name='prompt_create'),

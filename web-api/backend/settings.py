@@ -34,6 +34,8 @@ CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', 'http://localhos
 
 # CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000').split(' ')
 
+FRONTEND_BASE_URL = os.environ['FRONTEND_BASE_URL']
+
 AUTH_USER_MODEL = 'users.User'
 
 
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # django extensions
+    'django_extensions',
     'django_celery_results',
     'django_celery_beat',
     'corsheaders',
@@ -59,6 +62,7 @@ INSTALLED_APPS = [
     # local
     'backend.answers',
     'backend.prompts',
+    'backend.notifications',
     'backend.transactions',
     'backend.users',
     'backend.votes',
@@ -205,3 +209,9 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
     }
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']

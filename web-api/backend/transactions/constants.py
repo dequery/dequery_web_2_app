@@ -1,4 +1,3 @@
-from django.db.models.fields import CharField
 from model_utils import Choices
 
 

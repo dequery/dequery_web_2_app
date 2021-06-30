@@ -21,7 +21,7 @@ class DeqTransaction(models.Model):
     @classmethod
     def eth_to_deq(cls, eth_amount):
         return eth_amount * DEQ_TO_ETH_CONVERSION_RATIO
-    
+
     @classmethod
     def deq_to_eth(cls, deq_amount):
         return deq_amount * ETH_TO_DEQ_CONVERSION_RATIO

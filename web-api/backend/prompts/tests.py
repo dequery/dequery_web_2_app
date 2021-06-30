@@ -2,7 +2,6 @@ import datetime
 from decimal import *
 
 from django.utils import timezone
-from django.utils.timezone import make_aware
 from django.test import TestCase
 from rest_framework.test import APIClient
 
