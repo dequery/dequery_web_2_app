@@ -3,7 +3,6 @@ Custom Extended User model as recomended by the Django Docs
 
 https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#a-full-example
 """
-from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
 
@@ -123,7 +122,7 @@ class ResetPasswordCodeManager(models.Manager):
 class ResetPasswordCode(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     code = models.CharField(max_length=12, db_index=True, unique=True)
-    expiration_datetime = models.DateTimeField(default=timezone.now() + timezone.timedelta(days=1))
+    expiration_datetime = models.DateTimeField()
     user = models.ForeignKey(User, related_name='reset_password_codes', on_delete=models.CASCADE)
     used = models.BooleanField(default=False)
 

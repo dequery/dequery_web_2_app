@@ -1,6 +1,7 @@
 import random
 import string
 
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.conf import settings
 
@@ -30,7 +31,8 @@ class RequestResetPassword(views.APIView):
             return Response({'detail': 'Reset password link sent if an account exists with provided email'}, status=201)
 
         code = ''.join(random.choice(string.ascii_letters) for _ in range(12))
-        reset_password_code = ResetPasswordCode.objects.create(code=code, user=user)
+        expiration_datetime = timezone.now() + timezone.timedelta(days=1)
+        reset_password_code = ResetPasswordCode.objects.create(code=code, user=user, expiration_datetime=expiration_datetime)
         reset_password_code.save()
         reset_link = f'{settings.FRONTEND_BASE_URL}/reset-password/{code}'
         content = {
