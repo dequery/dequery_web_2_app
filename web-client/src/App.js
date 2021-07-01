@@ -11,6 +11,7 @@ import About from 'features/about/components/About';
 import CookieLogin from 'features/auth/components/CookieLogin';
 import CreatePromptForm from 'features/prompt/components/CreatePromptForm';
 import EthCashoutForm from 'features/profile/components/EthCashoutForm';
+import ForgotPasswordForm from 'features/auth/components/ForgotPasswordForm';
 import LoginForm from 'features/auth/components/LoginForm';
 import PromptDetail from 'features/prompt/components/PromptDetail';
 import PromptTabs from 'features/prompt/components/PromptTabs';
@@ -70,6 +71,7 @@ function App() {
             <Route exact path="/about" component={About} />
             <Route exact path="/deq-to-eth" component={EthCashoutForm} />
             <Route exact path="/login" component={LoginForm} />
+            <Route exact path="/forgot-password" component={ForgotPasswordForm} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/prompts/create" component={CreatePromptForm} />
             <Route exact path="/prompts/:promptPk" component={PromptDetail} />

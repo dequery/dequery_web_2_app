@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { login, selectIsFetching, selectRespError, selectUser, selectUserCreated } from 'features/auth/authSlice';
 
+import PlainLink from 'features/topnav/components/PlainLink';
 import CookieLogin from 'features/auth/components/CookieLogin';
 import TextInput from 'features/auth/components/TextInput';
 
@@ -65,7 +66,7 @@ function LoginForm() {
 
               {nonFieldError && (
                 <Grid item xs={12}>
-                    <Alert severity="error">{nonFieldError}</Alert>
+                  <Alert severity="error">{nonFieldError}</Alert>
                 </Grid>
               )}
 
@@ -100,6 +101,12 @@ function LoginForm() {
                 <Button disabled={isFetching} variant="contained" color="primary" type="submit">
                     Login
                 </Button>
+              </Grid>
+
+              <Grid className={classes.centeredGrid} item xs={12}>
+                <PlainLink to='/forgot-password'>
+                  <Typography variant="body1">Forgot Password</Typography>
+                </PlainLink>
               </Grid>
             </Grid>
           </form>

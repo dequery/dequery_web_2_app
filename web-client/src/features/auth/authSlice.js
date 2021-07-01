@@ -11,6 +11,7 @@ const initialState = {
   user: {},
   userCreated: false,
   resetPasswordSuccess: false,
+  forgotPasswordSuccess: false,
 };
 
 export const submitAlphaRequest = createAsyncThunk(
@@ -40,6 +41,16 @@ export const signup = createAsyncThunk(
     'POST',
     thunkAPI,
     { display_name: displayName, email, password, signup_code: signupCode }
+  )
+);
+
+export const forgotPassword = createAsyncThunk(
+  'auth/forgotPassword',
+  async ({ email }, thunkAPI) => dequeryClient(
+    '/api/notifications/reset-password/',
+    'POST',
+    thunkAPI,
+    { email: email }
   )
 );
 
@@ -131,17 +142,28 @@ export const authSlice = createSlice({
         state.isFetching = false;
         state.respError = action.payload;
       })
+      .addCase(forgotPassword.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.isFetching = false;
+        state.forgotPasswordSuccess = true;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.isFetching = false;
+        state.respError = action.payload.detail;
+      })
       .addCase(resetPassword.pending, (state) => {
         state.isFetching = true;
         state.respError = initialState.respError;
       })
-      .addCase(resetPassword.fulfilled, (state, action) => {
+      .addCase(resetPassword.fulfilled, (state) => {
         state.isFetching = false;
         state.resetPasswordSuccess = true;
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.isFetching = false;
-        console.log(action.payload);
         state.respError = action.payload.detail;
       })
       .addCase(signup.pending, (state) => {
@@ -167,5 +189,6 @@ export const selectUser = (state) => state.auth.user;
 export const selectUserCreated = (state) => state.auth.userCreated;
 export const selectRespError = (state) => state.auth.respError;
 export const selectResetPasswordSuccess = (state) => state.auth.resetPasswordSuccess
+export const selectForgotPasswordSuccess = (state) => state.auth.forgotPasswordSuccess
 
 export default authSlice.reducer;
