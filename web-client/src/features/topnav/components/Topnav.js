@@ -58,6 +58,7 @@ function Topnav() {
         >
           <PlainLink to="/"><MenuItem onClick={handleClose}>Home</MenuItem></PlainLink>
           <PlainLink to="/about"><MenuItem onClick={handleClose}>About</MenuItem></PlainLink>
+          <MenuItem><a className={classes.plainAnchor} href="https://dequery.ghost.io/">Blog</a></MenuItem>
           <MenuItem><a className={classes.plainAnchor} href="https://docs.google.com/document/d/1VsMbWJxPcDNJFNSEdHfKyL9v8WREks9d5t0Ot_7maPs/edit">Whitepaper</a></MenuItem>
           <MenuItem><a className={classes.plainAnchor} href="https://trello.com/b/cQ96rwc8/dev">Roadmap</a></MenuItem>
           <PlainLink to="/profile"><MenuItem onClick={handleClose}>Profile</MenuItem></PlainLink>

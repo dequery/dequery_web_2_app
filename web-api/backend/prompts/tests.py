@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 from backend.answers.models import Answer
 from backend.prompts.constants import PROMPT_STATUS_CHOICES
 from backend.prompts.factories import PromptFactory, TEST_CONTENT
-from backend.prompts.models import Prompt
+from backend.prompts.models import Prompt, PromptWatch
 from backend.transactions.constants import TRANSACTION_CATEGORY_CHOICES
 from backend.transactions.factories import DeqTransactionFactory
 from backend.transactions.models import DeqTransaction
@@ -49,6 +49,19 @@ class PromptTests(TestCase):
         if askers_cut:
             body['askers_cut'] = askers_cut
         response = client.post('/api/prompts/create/', body, format='json')
+        return response
+
+    def _api_create_prompt_watch(self, prompt, user):
+        client.force_authenticate(user=user)
+        response = client.post('/api/prompt-watches/create/', {
+            'user': user.pk,
+            'prompt': prompt.pk,
+        }, format='json')
+        return response
+
+    def _api_delete_prompt_watch(self, prompt_watch, user):
+        client.force_authenticate(user=user)
+        response = client.delete(f'/api/prompt-watches/delete/{prompt_watch.pk}', {}, format='json')
         return response
 
     def _api_create_deq_transaction(self, user, amount, category, extra_info):
@@ -378,3 +391,32 @@ class PromptTests(TestCase):
         self.assertEqual(2, len(response.json()['results']))
         for prompt in response.json()['results']:
             self.assertTrue(hidden_code, prompt['hidden_code'])
+
+    def test_prompt_watch(self):
+        # it adds prompt creator as a watcher
+        user = UserFactory(display_name='joer_mormont', email='joer_mormont@nightswatch.wall')
+        DeqTransactionFactory(user=user, amount=300)
+        response = self._api_create_prompt(user, 200)
+        self.assertEqual(response.status_code, 201)
+        prompt = Prompt.objects.get(pk=response.json()['pk'])
+        self.assertEqual(len(prompt.watchers.all()), 1)
+        self.assertEqual(prompt.watchers.all()[0].user.display_name, user.display_name)
+
+        # a user can become a watcher
+        user_2 = UserFactory(display_name='john_snow', email='john_snow@nightswatch.wall')
+        response = self._api_create_prompt_watch(prompt, user_2)
+        self.assertEqual(response.status_code, 201)
+        prompt_watch = PromptWatch.objects.get(pk=response.json()['pk'])
+        prompt.refresh_from_db()
+        self.assertEqual(len(prompt.watchers.all()), 2)
+        self.assertEqual(prompt_watch.user.display_name, user_2.display_name)
+
+        # a user can not delete another user's watch
+        response = self._api_delete_prompt_watch(prompt_watch, user)
+        self.assertEqual(response.status_code, 403)
+
+        # a user can stop being a watcher
+        response = self._api_delete_prompt_watch(prompt_watch, user_2)
+        self.assertEqual(response.status_code, 204)
+        prompt.refresh_from_db()
+        self.assertEqual(len(prompt.watchers.all()), 1)

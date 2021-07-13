@@ -119,3 +119,13 @@ class Prompt(models.Model):
         self.status = PROMPT_STATUS_CHOICES.CLOSED
         self.save(update_fields=['status'])
         return self
+
+
+class PromptWatchManager(models.Manager):
+    pass
+
+
+class PromptWatch(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, related_name='watching', on_delete=models.PROTECT)
+    prompt = models.ForeignKey(Prompt, related_name='watchers', on_delete=models.PROTECT)

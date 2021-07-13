@@ -128,7 +128,7 @@ function CreatePromptForm() {
                 />
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              {/*<Grid item xs={12} md={4}>
                 <TextInput
                   name="hiddenCode"
                   control={control}
@@ -137,7 +137,7 @@ function CreatePromptForm() {
                   label="Hidden code (optional)"
                   helperText="Optional code used to hide prompt from public"
                 />
-              </Grid>
+                </Grid>*/}
 
               <Grid item xs={12}>
                 <PromptEditor onEditorStateChange={setEditorState} editorState={editorState} />

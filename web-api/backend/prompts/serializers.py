@@ -1,10 +1,35 @@
 from rest_framework import serializers
 
 from backend.answers.serializers import AnswerListRetrieveSerializer
-from backend.prompts.models import Prompt
+from backend.users.models import User
+from backend.prompts.models import Prompt, PromptWatch
 from backend.transactions.constants import TRANSACTION_CATEGORY_CHOICES
 from backend.transactions.models import DeqTransaction
 from backend.votes.models import VoteBalance
+
+
+class WatcherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['display_name']
+        read_only_fields = ['display_name']
+
+
+class PromptWatchSerializer(serializers.ModelSerializer):
+    user = WatcherSerializer()
+
+    class Meta:
+        model = PromptWatch
+        fields = ['created', 'user', 'pk', 'prompt']
+        read_only_fields = ['created', 'user', 'pk', 'prompt']
+
+
+class PromptWatchCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = PromptWatch
+        fields = ['created', 'user', 'pk', 'prompt']
 
 
 class PromptCreateSerializer(serializers.ModelSerializer):
@@ -13,8 +38,8 @@ class PromptCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['askers_cut', 'bounty', 'content', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user']
-        read_only_fields = ['bounty', 'created', 'pk', 'status', 'user']
+        fields = ['askers_cut', 'bounty', 'content', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user', 'watchers']
+        read_only_fields = ['bounty', 'created', 'pk', 'status', 'user', 'watchers']
 
     def create(self, validated_data):
         bounty = validated_data.pop('bounty')
@@ -33,6 +58,8 @@ class PromptCreateSerializer(serializers.ModelSerializer):
             user=validated_data['user'],
         )
         vote_balance.save()
+        prompt_watch = PromptWatch.objects.create(user=validated_data['user'],prompt=prompt)
+        prompt_watch.save()
         return prompt
 
     def validate_askers_cut(self, value):
@@ -59,16 +86,18 @@ class PromptDetailSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
 
     class Meta:
+        depth = 1
         model = Prompt
-        fields = ['askers_cut', 'answers', 'bounty', 'content', 'created', 'expiration_datetime', 'hidden_code', 'status', 'pk', 'title', 'user']
-        read_only_fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'status', 'pk', 'title', 'user']
+        fields = ['askers_cut', 'answers', 'bounty', 'content', 'created', 'expiration_datetime', 'hidden_code', 'status', 'pk', 'title', 'user', 'watchers']
+        read_only_fields = ['answers', 'bounty', 'content', 'created', 'expiration_datetime', 'status', 'pk', 'title', 'user', 'watchers']
 
 
 class PromptListSerializer(serializers.ModelSerializer):
     bounty = serializers.IntegerField()
     user = serializers.StringRelatedField()
+    watchers = PromptWatchSerializer(many=True)
 
     class Meta:
         model = Prompt
-        fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user']
-        read_only_fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user']
+        fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user', 'watchers']
+        read_only_fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user', 'watchers']

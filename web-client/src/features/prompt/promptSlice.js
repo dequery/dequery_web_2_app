@@ -36,6 +36,28 @@ export const createPrompt = createAsyncThunk(
   )
 );
 
+export const addPromptWatcher = createAsyncThunk(
+  'prompt/addPromptWatcher',
+  async ({ prompt }, thunkAPI) => dequeryClient(
+    '/api/prompt-watches/create/',
+    'POST',
+    thunkAPI,
+    { prompt },
+    true
+  )
+);
+
+export const removePromptWatcher = createAsyncThunk(
+  'prompt/removePromptWatcher',
+  async ({ prompt }, thunkAPI) => dequeryClient(
+    `/api/prompt-watches/delete/${prompt.pk}/`,
+    'DESTROY',
+    thunkAPI,
+    {},
+    true
+  )
+);
+
 export const increasePromptBounty = createAsyncThunk(
   'prompt/increasePromptBounty',
   async ({ amount, extraInfo }, thunkAPI) => dequeryClient(
@@ -113,6 +135,20 @@ export const promptSlice = createSlice({
       })
       .addCase(createPrompt.rejected, (state, action) => {
         state.isFetching = false;
+        state.respError = action.payload;
+      })
+      .addCase(addPromptWatcher.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(addPromptWatcher.fulfilled, (state, action) => {
+        state.isFetching = false;
+        debugger
+        state.promptDetail.bounty = (parseFloat(state.promptDetail.bounty) + parseFloat(action.payload.amount)).toString();
+      })
+      .addCase(addPromptWatcher.rejected, (state, action) => {
+        state.isFetching = false;
+        debugger
         state.respError = action.payload;
       })
       .addCase(increasePromptBounty.pending, (state) => {

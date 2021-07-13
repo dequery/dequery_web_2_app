@@ -6,9 +6,9 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { login, selectIsFetching, selectRespError, selectUser, selectUserCreated } from 'features/auth/authSlice';
 
-import PlainLink from 'features/topnav/components/PlainLink';
 import CookieLogin from 'features/auth/components/CookieLogin';
 import TextInput from 'features/auth/components/TextInput';
+import UnderlinedLink from 'features/topnav/components/UnderlinedLink';
 
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
@@ -104,9 +104,9 @@ function LoginForm() {
               </Grid>
 
               <Grid className={classes.centeredGrid} item xs={12}>
-                <PlainLink to='/forgot-password'>
+                <UnderlinedLink to='/forgot-password'>
                   <Typography variant="body1">Forgot Password</Typography>
-                </PlainLink>
+                </UnderlinedLink>
               </Grid>
             </Grid>
           </form>

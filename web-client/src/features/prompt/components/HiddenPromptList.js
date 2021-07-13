@@ -50,7 +50,7 @@ function HiddenPromptList() {
         {promptHiddenList.results.map((prompt, i) => {
           return (
             <Grid key={i} item xs={12}>
-              <PromptCard prompt={prompt} />
+              <PromptCard prompt={prompt} user={user} />
             </Grid>
           );
         })}
