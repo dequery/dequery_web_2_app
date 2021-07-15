@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
 
-import { addPromptWatcher } from 'features/prompt/promptSlice';
+import { addPromptWatcher, removePromptWatcher } from 'features/prompt/promptSlice';
 
 import AlarmOnIcon from '@material-ui/icons/AlarmOn';
 import Card from '@material-ui/core/Card';
@@ -22,7 +22,12 @@ function PromptCard(props) {
 
   const handleWatchClick = (e, prompt) => {
     e.preventDefault();
-    dispatch(addPromptWatcher({ prompt: prompt.pk }));
+    if (prompt.watchers.filter(w => w.user.display_name === user.display_name).length > 0) {
+      const promptWatcher = prompt.watchers.find(watcher => watcher.user.display_name === user.display_name);
+      dispatch(removePromptWatcher({ promptWatcher: promptWatcher.pk }));
+    } else {
+      dispatch(addPromptWatcher({ prompt: prompt.pk }));
+    }
   }
 
   const watchButtonColor = (watchers) => {
@@ -30,7 +35,7 @@ function PromptCard(props) {
       return "secondary";
     }
 
-    if (watchers.filter(w => w.display_name === user.display_name).length > 0) {
+    if (watchers.filter(w => w.user.display_name === user.display_name).length > 0) {
       return "primary";
     }
     return "secondary";
@@ -45,9 +50,18 @@ function PromptCard(props) {
               {prompt.bounty} DEQ
             </Typography>
             <Typography variant="body2" gutterbottom>
-              <Tooltip title="Watch prompt. Will send notifications when another user submits an answer and when prompt is about to expire.">
-                <IconButton disabled={!user.pk} onClick={(e) => handleWatchClick(e, prompt)} color={watchButtonColor(prompt.watchers)}><AlarmOnIcon /></IconButton>
-              </Tooltip>
+              {user.pk ?
+                (
+                  <Tooltip title="Watch prompt. Will send notifications when another user submits an answer and when prompt is about to expire.">
+                    <IconButton onClick={(e) => handleWatchClick(e, prompt)} color={watchButtonColor(prompt.watchers)}><AlarmOnIcon /></IconButton>
+                  </Tooltip>
+                ) :
+                (
+                  <PlainLink to='/login'>
+                    <IconButton disabled={true} color={watchButtonColor(prompt.watchers)}><AlarmOnIcon /></IconButton>
+                  </PlainLink>
+                )
+              }
               {watchers_count}
             </Typography>
           </Grid>

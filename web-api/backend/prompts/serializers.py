@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from backend.notifications.models import Notification
 from backend.answers.serializers import AnswerListRetrieveSerializer
 from backend.users.models import User
 from backend.prompts.models import Prompt, PromptWatch
@@ -25,12 +26,22 @@ class PromptWatchSerializer(serializers.ModelSerializer):
 
 
 class PromptWatchCreateSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    request_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    user = WatcherSerializer(read_only=True)
 
     class Meta:
         model = PromptWatch
-        fields = ['created', 'user', 'pk', 'prompt']
+        fields = ['created', 'request_user', 'user', 'pk', 'prompt']
+        read_only = ['user']
 
+    def validate(self, data):
+        prompt_watches = PromptWatch.objects.filter(prompt=data['prompt'], user=data['request_user']).exists()
+
+        if prompt_watches:
+            raise serializers.ValidationError('User is already watching prompt')
+        data['user'] = data['request_user']
+        del data['request_user']
+        return data
 
 class PromptCreateSerializer(serializers.ModelSerializer):
     bounty = serializers.IntegerField()
@@ -58,7 +69,7 @@ class PromptCreateSerializer(serializers.ModelSerializer):
             user=validated_data['user'],
         )
         vote_balance.save()
-        prompt_watch = PromptWatch.objects.create(user=validated_data['user'],prompt=prompt)
+        prompt_watch = PromptWatch.objects.create(user=validated_data['user'], prompt=prompt)
         prompt_watch.save()
         return prompt
 

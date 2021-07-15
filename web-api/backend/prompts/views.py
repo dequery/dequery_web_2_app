@@ -1,9 +1,17 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
 from backend.permissions import IsOwnerOnly
 from backend.prompts.models import Prompt, PromptWatch
 from backend.prompts.serializers import PromptCreateSerializer, PromptDetailSerializer, PromptListSerializer, PromptWatchCreateSerializer
+
+
+class DestroyWithPayloadMixin(object):
+     def destroy(self, *args, **kwargs):
+         serializer = self.get_serializer(self.get_object())
+         super().destroy(*args, **kwargs)
+         return Response(serializer.data, status=200)
 
 
 class PromptCreate(generics.CreateAPIView):
@@ -31,7 +39,7 @@ class PromptWatchCreate(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class PromptWatchDelete(generics.DestroyAPIView):
+class PromptWatchDelete(DestroyWithPayloadMixin, generics.DestroyAPIView):
     queryset = PromptWatch.objects.all()
     serializer_class = PromptWatchCreateSerializer
     permission_classes = [IsAuthenticated, IsOwnerOnly]

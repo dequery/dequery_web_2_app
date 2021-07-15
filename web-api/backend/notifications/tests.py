@@ -1,29 +1,25 @@
 from django.core import mail
 from django.test import TestCase
-from rest_framework.test import APIClient
 
+from backend.test_client import TestClient
 from backend.users.factories import UserFactory
+from backend.transactions.factories import DeqTransactionFactory
+from backend.prompts.models import Prompt
 from backend.notifications.constants import NOTIFICATION_CATEGORY_CHOICES, NOTIFICATION_DELIVERY_METHODS, NOTIFICATION_STATUS_CHOICES
 from backend.notifications.factories import NotificationFactory
 from backend.notifications.models import Notification
 
 
-client = APIClient()
+client = TestClient()
 
 
 class NotificationTests(TestCase):
     def setUp(self):
         self.user = UserFactory()
 
-    def _api_create_notification(self, email):
-        response = client.post('/api/notifications/reset-password/', {
-            'email': email,
-        }, format='json')
-        return response
-
     def test_notification_create(self):
         # it secretely fails for invalid email
-        response = self._api_create_notification('invalid@email.org')
+        response = client.api_create_notification('invalid@email.org')
         self.assertEqual(201, response.status_code)
         notifications = Notification.objects.all()
         self.assertEqual(0, len(list(notifications)))
@@ -31,7 +27,7 @@ class NotificationTests(TestCase):
         # it creates a notification for a valid email
         email = 'ping_me@sub.com'
         user = UserFactory(display_name='ping_me', email=email)
-        response = self._api_create_notification(email)
+        response = client.api_create_notification(email)
         self.assertEqual(201, response.status_code)
         notification = Notification.objects.filter(user=user).first()
         self.assertEqual('Reset Password Request', notification.content['subject'])
@@ -121,3 +117,21 @@ class NotificationTests(TestCase):
         self.assertEqual(already_failed_notification.status, NOTIFICATION_STATUS_CHOICES.FAILED)
         already_processing_notification.refresh_from_db()
         self.assertEqual(already_processing_notification.status, NOTIFICATION_STATUS_CHOICES.PROCESSING)
+
+    def test_answer_notification(self):
+        # it creates a notification for watchers
+        user = UserFactory(display_name='1123', email='1123@fib.org')
+        DeqTransactionFactory(user=user, amount=300)
+        response = client.api_create_prompt(user, 200)
+        self.assertEqual(response.status_code, 201)
+        prompt = Prompt.objects.get(pk=response.json()['pk'])
+
+        user2 = UserFactory(display_name='benjen_stark', email='benjen_stark@nightswatch.wall')
+        response = client.api_create_prompt_watch(prompt, user2)
+
+        user3 = UserFactory(display_name='5813', email='5812@fib.org')
+        response = client.api_create_answer(user3, prompt.pk)
+        self.assertEqual(response.status_code, 201)
+
+        notifications = Notification.objects.filter(user__in=[user, user2])
+        self.assertEqual(len(notifications), 2)

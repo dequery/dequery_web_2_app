@@ -49,9 +49,9 @@ export const addPromptWatcher = createAsyncThunk(
 
 export const removePromptWatcher = createAsyncThunk(
   'prompt/removePromptWatcher',
-  async ({ prompt }, thunkAPI) => dequeryClient(
-    `/api/prompt-watches/delete/${prompt.pk}/`,
-    'DESTROY',
+  async ({ promptWatcher }, thunkAPI) => dequeryClient(
+    `/api/prompt-watches/delete/${promptWatcher}/`,
+    'DELETE',
     thunkAPI,
     {},
     true
@@ -143,12 +143,25 @@ export const promptSlice = createSlice({
       })
       .addCase(addPromptWatcher.fulfilled, (state, action) => {
         state.isFetching = false;
-        debugger
-        state.promptDetail.bounty = (parseFloat(state.promptDetail.bounty) + parseFloat(action.payload.amount)).toString();
+        const promptIndex = state.promptList.results.findIndex(prompt => prompt.pk === action.payload.prompt);
+        state.promptList.results[promptIndex].watchers.push(action.payload);
       })
       .addCase(addPromptWatcher.rejected, (state, action) => {
         state.isFetching = false;
-        debugger
+        state.respError = action.payload;
+      })
+      .addCase(removePromptWatcher.pending, (state) => {
+        state.isFetching = true;
+        state.respError = initialState.respError;
+      })
+      .addCase(removePromptWatcher.fulfilled, (state, action) => {
+        state.isFetching = false;
+        const promptIndex = state.promptList.results.findIndex(prompt => prompt.pk === action.payload.prompt);
+        const watchers = state.promptList.results[promptIndex].watchers;
+        state.promptList.results[promptIndex].watchers = watchers.filter(watcher => watcher.pk !== action.payload.pk);
+      })
+      .addCase(removePromptWatcher.rejected, (state, action) => {
+        state.isFetching = false;
         state.respError = action.payload;
       })
       .addCase(increasePromptBounty.pending, (state) => {

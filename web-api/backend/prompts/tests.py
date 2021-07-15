@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.test import TestCase
 from rest_framework.test import APIClient
 
+from backend.test_client import TestClient
 from backend.answers.models import Answer
 from backend.prompts.constants import PROMPT_STATUS_CHOICES
 from backend.prompts.factories import PromptFactory, TEST_CONTENT
@@ -16,7 +17,7 @@ from backend.users.factories import UserFactory
 from backend.votes.models import VoteBalance
 
 
-client = APIClient()
+client = TestClient()
 
 
 class PromptTests(TestCase):
@@ -24,92 +25,25 @@ class PromptTests(TestCase):
         self.user = UserFactory()
         self.prompt = PromptFactory(user=self.user)
 
-    def _api_create_answer(self, user, prompt_pk):
-        client.force_authenticate(user=user)
-        response = client.post('/api/answers/create/', {
-            'content': TEST_CONTENT,
-            'user': user.pk,
-            'prompt': prompt_pk,
-        }, format='json')
-        return response
-
-    def _api_create_prompt(self, user, bounty, hidden_code=None, askers_cut=None, expiration_datetime=None):
-        if not expiration_datetime:
-            expiration_datetime = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
-        client.force_authenticate(user=user)
-        body = {
-            'bounty': bounty,
-            'content': TEST_CONTENT,
-            'expiration_datetime': expiration_datetime,
-            'title': 'test',
-            'user': user.pk,
-            }
-        if hidden_code:
-            body['hidden_code'] = hidden_code
-        if askers_cut:
-            body['askers_cut'] = askers_cut
-        response = client.post('/api/prompts/create/', body, format='json')
-        return response
-
-    def _api_create_prompt_watch(self, prompt, user):
-        client.force_authenticate(user=user)
-        response = client.post('/api/prompt-watches/create/', {
-            'user': user.pk,
-            'prompt': prompt.pk,
-        }, format='json')
-        return response
-
-    def _api_delete_prompt_watch(self, prompt_watch, user):
-        client.force_authenticate(user=user)
-        response = client.delete(f'/api/prompt-watches/delete/{prompt_watch.pk}', {}, format='json')
-        return response
-
-    def _api_create_deq_transaction(self, user, amount, category, extra_info):
-        client.force_authenticate(user=user)
-        response = client.post('/api/transactions/create/', {
-            'amount': amount,
-            'category': category,
-            'extra_info': extra_info,
-            'user': user.pk,
-        }, format='json')
-        return response
-
-    def _api_create_vote_cast(self, user, amount, answer_pk, prompt_pk):
-        client.force_authenticate(user=user)
-        vote_balance = user.vote_balances.filter(prompt=prompt_pk).first()
-        response = client.post('/api/vote-casts/create/', {
-            'amount': amount,
-            'answer': answer_pk,
-            'vote_balance': vote_balance.pk,
-        }, format='json')
-        return response
-
     def _create_prompt_scenario(self, user, bounty, create_answers_data, askers_cut=None):
         DeqTransactionFactory(user=user, amount=bounty)
-        response = self._api_create_prompt(self.user, bounty, askers_cut=askers_cut)
+        response = client.api_create_prompt(self.user, bounty, askers_cut=askers_cut)
         self.assertEqual(201, response.status_code)
         prompt_pk = response.data['pk']
         answers = []
         for answer_data in create_answers_data:
-            response = self._api_create_answer(answer_data['user'], prompt_pk)
+            response = client.api_create_answer(answer_data['user'], prompt_pk)
             self.assertEqual(201, response.status_code)
             answer_pk = response.data['pk']
             answer = Answer.objects.get(pk=answer_pk)
             if answer_data['votes'] > 0:
-                response = self._api_create_vote_cast(user, answer_data['votes'], answer_pk, prompt_pk)
+                response = client.api_create_vote_cast(user, answer_data['votes'], answer_pk, prompt_pk)
                 self.assertEqual(201, response.status_code)
             answers.append(answer)
         prompt = Prompt.objects.get(pk=prompt_pk)
         prompt.status = PROMPT_STATUS_CHOICES.CLOSING
         prompt.save(update_fields=['status'])
         return prompt, answers
-
-    def _api_retrieve_prompts(self, hidden_code=None):
-        if hidden_code:
-            response = client.get(f'/api/prompts/?hidden_code={hidden_code}')
-        else:
-            response = client.get('/api/prompts/')
-        return response
 
     def test_user_matches(self):
         self.assertEqual(self.user.pk, self.prompt.user.pk)
@@ -172,7 +106,7 @@ class PromptTests(TestCase):
         increase_amount = 200
         user7 = UserFactory(display_name='user7', email='user7@eth.net')
         DeqTransactionFactory(user=user7, amount=increase_amount)
-        response = self._api_create_deq_transaction(user7, increase_amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
+        response = client.api_create_deq_transaction(user7, increase_amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
         self.assertEqual(201, response.status_code)
         prompt.distribute()
         self.assertEqual(starting_deq_balance + bounty, self.user.deq_balance)
@@ -190,12 +124,12 @@ class PromptTests(TestCase):
         user10 = UserFactory(display_name='user10', email='user10@eth.net')
         increase_amount = 300
         DeqTransactionFactory(user=user10, amount=increase_amount)
-        response = self._api_create_deq_transaction(user10, increase_amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
+        response = client.api_create_deq_transaction(user10, increase_amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
         self.assertEqual(increase_amount, float(user10.vote_balances.filter(prompt=prompt.pk).first().remaining_amount))
         self.assertEqual(201, response.status_code)
-        response = self._api_create_vote_cast(user10, 200, answers[0].pk, prompt.pk)
+        response = client.api_create_vote_cast(user10, 200, answers[0].pk, prompt.pk)
         self.assertEqual(201, response.status_code)
-        response = self._api_create_vote_cast(user10, 100, answers[1].pk, prompt.pk)
+        response = client.api_create_vote_cast(user10, 100, answers[1].pk, prompt.pk)
         self.assertEqual(201, response.status_code)
         self.assertEqual(0.0, float(user10.vote_balances.filter(prompt=prompt.pk).first().remaining_amount))
         prompt.distribute()
@@ -217,12 +151,12 @@ class PromptTests(TestCase):
         user13 = UserFactory(display_name='user13', email='user13@eth.net')
         increase_amount = 300
         DeqTransactionFactory(user=user13, amount=increase_amount)
-        response = self._api_create_deq_transaction(user13, increase_amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
+        response = client.api_create_deq_transaction(user13, increase_amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
         self.assertEqual(increase_amount, float(user13.vote_balances.filter(prompt=prompt.pk).first().remaining_amount))
         self.assertEqual(201, response.status_code)
-        response = self._api_create_vote_cast(user13, 200, answers[0].pk, prompt.pk)
+        response = client.api_create_vote_cast(user13, 200, answers[0].pk, prompt.pk)
         self.assertEqual(201, response.status_code)
-        response = self._api_create_vote_cast(user13, 100, answers[1].pk, prompt.pk)
+        response = client.api_create_vote_cast(user13, 100, answers[1].pk, prompt.pk)
         self.assertEqual(201, response.status_code)
         self.assertEqual(0.0, float(user13.vote_balances.filter(prompt=prompt.pk).first().remaining_amount))
         prompt.distribute()
@@ -237,13 +171,13 @@ class PromptTests(TestCase):
         user = UserFactory(display_name='pirate', email='pirate@bay.com')
         DeqTransactionFactory(user=user, amount=400)
         expired_time_1 = (timezone.now() + timezone.timedelta(days=-1)).strftime("%Y-%m-%d %H:%M:%S")
-        prompt1_pk = self._api_create_prompt(user, 100, expiration_datetime=expired_time_1).data['pk']
+        prompt1_pk = client.api_create_prompt(user, 100, expiration_datetime=expired_time_1).data['pk']
         expired_time_2 = (timezone.now() + timezone.timedelta(minutes=-1)).strftime("%Y-%m-%d %H:%M:%S")
-        prompt2_pk = self._api_create_prompt(user, 100, expiration_datetime=expired_time_2).data['pk']
+        prompt2_pk = client.api_create_prompt(user, 100, expiration_datetime=expired_time_2).data['pk']
         nonexpired_time_1 = (timezone.now() + timezone.timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
-        prompt3_pk = self._api_create_prompt(user, 100, expiration_datetime=nonexpired_time_1).data['pk']
+        prompt3_pk = client.api_create_prompt(user, 100, expiration_datetime=nonexpired_time_1).data['pk']
         nonexpired_time_2 = (timezone.now() + timezone.timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M:%S")
-        prompt4_pk = self._api_create_prompt(user, 100, expiration_datetime=nonexpired_time_2).data['pk']
+        prompt4_pk = client.api_create_prompt(user, 100, expiration_datetime=nonexpired_time_2).data['pk']
         promt5_pk = PromptFactory(user=self.user, status='closing')
         Prompt.distribute_bounties()
         active_prompts = Prompt.objects.filter(status=PROMPT_STATUS_CHOICES.ACTIVE)
@@ -258,13 +192,13 @@ class PromptTests(TestCase):
     def test_prompt_create(self):
         # it failes if the user does not have enough DEQ
         user = UserFactory(display_name='maker', email='maker@maker.eth')
-        response = self._api_create_prompt(user, 500)
+        response = client.api_create_prompt(user, 500)
         self.assertEqual(400, response.status_code)
         self.assertEqual('Not enough DEQ to pay for bounty', response.json()['non_field_errors'][0])
 
         # it works when user has enough bounty
         DeqTransactionFactory(user=user, amount=500)
-        response = self._api_create_prompt(user, 500)
+        response = client.api_create_prompt(user, 500)
         self.assertEqual(201, response.status_code)
         resp_data = response.json()
         self.assertEqual(resp_data['bounty'], 500)
@@ -284,26 +218,26 @@ class PromptTests(TestCase):
 
         # it fails when askers cut is too high
         DeqTransactionFactory(user=user, amount=500)
-        response = self._api_create_prompt(user, 500, askers_cut=1.1)
+        response = client.api_create_prompt(user, 500, askers_cut=1.1)
         self.assertEqual(400, response.status_code)
         self.assertEqual('Askers cut must be between 0 and 1', response.json()['askers_cut'][0])
 
     def test_add_answer_to_prompt(self):
         asker = UserFactory(display_name='asker', email='asker@oracle.eth')
         DeqTransactionFactory(user=asker, amount=500)
-        response = self._api_create_prompt(asker, 500)
+        response = client.api_create_prompt(asker, 500)
         self.assertEqual(201, response.status_code)
         resp_data = response.json()
         prompt = Prompt.objects.get(pk=resp_data['pk'])
         answerer = UserFactory(display_name='answerer', email='answerer@oracle.eth')
-        response = self._api_create_answer(answerer, prompt.pk)
+        response = client.api_create_answer(answerer, prompt.pk)
         self.assertEqual(201, response.status_code)
         answer = Answer.objects.get(pk=response.json()['pk'])
         answers = list(prompt.answers.all())
         self.assertEqual(1, len(answers))
         self.assertEqual(answer.pk, answers[0].pk)
         self.assertEqual(0, answer.votes)
-        response = self._api_create_vote_cast(asker, 300, answer.pk, prompt.pk)
+        response = client.api_create_vote_cast(asker, 300, answer.pk, prompt.pk)
         self.assertEqual(201, response.status_code)
         answer.refresh_from_db()
         self.assertEqual(300, answer.votes)
@@ -312,7 +246,7 @@ class PromptTests(TestCase):
         asker = UserFactory(display_name='og_asker', email='og_asker@oracle.eth')
         initial_bounty = 500
         DeqTransactionFactory(user=asker, amount=initial_bounty)
-        response = self._api_create_prompt(asker, initial_bounty)
+        response = client.api_create_prompt(asker, initial_bounty)
         self.assertEqual(201, response.status_code)
         resp_data = response.json()
         prompt = Prompt.objects.get(pk=resp_data['pk'])
@@ -320,18 +254,18 @@ class PromptTests(TestCase):
 
         # it fails if prompt does not exist
         amount = 200
-        response = self._api_create_deq_transaction(increaser, amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': 50000 })
+        response = client.api_create_deq_transaction(increaser, amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': 50000 })
         self.assertEqual(400, response.status_code)
         self.assertEqual('A valid prompt was not provided', response.json()['non_field_errors'][0])
 
         # it fails if increaser does not have enough DEQ
-        response = self._api_create_deq_transaction(increaser, amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
+        response = client.api_create_deq_transaction(increaser, amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
         self.assertEqual(400, response.status_code)
         self.assertEqual('Not enough DEQ to make transaction', response.json()['non_field_errors'][0])
 
         # it succeeds with valid prompt, DEQ balance, and vote valance 
         DeqTransactionFactory(user=increaser, amount=200)
-        response = self._api_create_deq_transaction(increaser, amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
+        response = client.api_create_deq_transaction(increaser, amount, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
         self.assertEqual(201, response.status_code)
         self.assertEqual(float(prompt.bounty), float(initial_bounty + amount))
         self.assertEqual(0.0, increaser.deq_balance)
@@ -340,11 +274,11 @@ class PromptTests(TestCase):
         # multiple iterations increase the same vote balance
         increaser2 = UserFactory(display_name='increaser2', email='increaser2@oracle.eth')
         DeqTransactionFactory(user=increaser2, amount=500)
-        response = self._api_create_deq_transaction(increaser2, 200, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
+        response = client.api_create_deq_transaction(increaser2, 200, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
         self.assertEqual(201, response.status_code)
         vote_balance = VoteBalance.objects.filter(user=increaser2, prompt=prompt.pk).first()
         self.assertEqual(200, vote_balance.amount)
-        response = self._api_create_deq_transaction(increaser2, 300, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
+        response = client.api_create_deq_transaction(increaser2, 300, TRANSACTION_CATEGORY_CHOICES.INCREASE_PROMPT_BOUNTY, { 'prompt': prompt.pk })
         self.assertEqual(201, response.status_code)
         vote_balance.refresh_from_db()
         self.assertEqual(500, vote_balance.amount)
@@ -352,22 +286,22 @@ class PromptTests(TestCase):
     def test_retrieve_prompts(self):
         amount = 300
         DeqTransactionFactory(user=self.user, amount=amount)
-        response = self._api_create_prompt(self.user, amount)
+        response = client.api_create_prompt(self.user, amount)
         self.assertEqual(201, response.status_code)
         DeqTransactionFactory(user=self.user, amount=amount)
         hidden_code = 'Caesar'
-        response = self._api_create_prompt(self.user, amount, hidden_code=hidden_code)
+        response = client.api_create_prompt(self.user, amount, hidden_code=hidden_code)
         self.assertEqual(201, response.status_code)
 
         # it retrieves prompts without hidden code by default
-        response = self._api_retrieve_prompts()
+        response = client.api_retrieve_prompts()
         self.assertEqual(200, response.status_code)
         self.assertGreaterEqual(len(response.json()['results']), 1)
         for prompt in response.json()['results']:
             self.assertTrue('' == prompt['hidden_code'])
 
         # it only retrieves prompt with hidden code when provided
-        response = self._api_retrieve_prompts(hidden_code=hidden_code)
+        response = client.api_retrieve_prompts(hidden_code=hidden_code)
         self.assertEqual(200, response.status_code)
         self.assertEqual(1, len(response.json()['results']))
         for prompt in response.json()['results']:
@@ -375,8 +309,8 @@ class PromptTests(TestCase):
 
         # it retrieves all prompts with matching hidden code
         DeqTransactionFactory(user=self.user, amount=amount)
-        response = self._api_create_prompt(self.user, amount, hidden_code=hidden_code)
-        response = self._api_retrieve_prompts(hidden_code=hidden_code)
+        response = client.api_create_prompt(self.user, amount, hidden_code=hidden_code)
+        response = client.api_retrieve_prompts(hidden_code=hidden_code)
         self.assertEqual(200, response.status_code)
         self.assertEqual(2, len(response.json()['results']))
         for prompt in response.json()['results']:
@@ -385,8 +319,8 @@ class PromptTests(TestCase):
         # it doesn't retrieve prompts with a non-matching hidden code
         DeqTransactionFactory(user=self.user, amount=amount)
         hidden_code_2 = 'Shugborough'
-        response = self._api_create_prompt(self.user, amount, hidden_code=hidden_code_2)
-        response = self._api_retrieve_prompts(hidden_code=hidden_code)
+        response = client.api_create_prompt(self.user, amount, hidden_code=hidden_code_2)
+        response = client.api_retrieve_prompts(hidden_code=hidden_code)
         self.assertEqual(200, response.status_code)
         self.assertEqual(2, len(response.json()['results']))
         for prompt in response.json()['results']:
@@ -396,7 +330,7 @@ class PromptTests(TestCase):
         # it adds prompt creator as a watcher
         user = UserFactory(display_name='joer_mormont', email='joer_mormont@nightswatch.wall')
         DeqTransactionFactory(user=user, amount=300)
-        response = self._api_create_prompt(user, 200)
+        response = client.api_create_prompt(user, 200)
         self.assertEqual(response.status_code, 201)
         prompt = Prompt.objects.get(pk=response.json()['pk'])
         self.assertEqual(len(prompt.watchers.all()), 1)
@@ -404,19 +338,25 @@ class PromptTests(TestCase):
 
         # a user can become a watcher
         user_2 = UserFactory(display_name='john_snow', email='john_snow@nightswatch.wall')
-        response = self._api_create_prompt_watch(prompt, user_2)
+        response = client.api_create_prompt_watch(prompt, user_2)
         self.assertEqual(response.status_code, 201)
         prompt_watch = PromptWatch.objects.get(pk=response.json()['pk'])
         prompt.refresh_from_db()
         self.assertEqual(len(prompt.watchers.all()), 2)
         self.assertEqual(prompt_watch.user.display_name, user_2.display_name)
 
+        # a user can not create two watches on the same prompt
+        response = client.api_create_prompt_watch(prompt, user_2)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['non_field_errors'][0], 'User is already watching prompt')
+
         # a user can not delete another user's watch
-        response = self._api_delete_prompt_watch(prompt_watch, user)
+        response = client.api_delete_prompt_watch(prompt_watch, user)
         self.assertEqual(response.status_code, 403)
 
         # a user can stop being a watcher
-        response = self._api_delete_prompt_watch(prompt_watch, user_2)
-        self.assertEqual(response.status_code, 204)
+        response = client.api_delete_prompt_watch(prompt_watch, user_2)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['pk'], prompt_watch.pk)
         prompt.refresh_from_db()
         self.assertEqual(len(prompt.watchers.all()), 1)

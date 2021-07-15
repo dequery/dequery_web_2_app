@@ -29,6 +29,22 @@ class Notification(models.Model):
             notification.save(update_fields=['status'])
             notification.send()
 
+    @classmethod
+    def create_answer_submitted_notification(cls, user, prompt):
+        prompt_link = f"{settings.FRONTEND_BASE_URL}/prompts/{prompt.pk}"
+        content = {
+            'subject': 'Answer added to a prompt you are watching',
+            'message': f"Hi {user.display_name}, a question you are following received a new answer: {prompt_link}. You can unsubscribe from these notifications by replying or sending an email to info@dequery.org",
+        }
+        notification = cls.objects.create(
+            user=user,
+            category=NOTIFICATION_CATEGORY_CHOICES.ANSWER_CREATED,
+            delivery_method=NOTIFICATION_DELIVERY_METHODS.EMAIL,
+            content=content,
+        )
+        notification.save()
+        return notification
+
     def save_as_failed(self, error_message):
         self.error_message = error_message
         self.status = NOTIFICATION_STATUS_CHOICES.FAILED

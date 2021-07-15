@@ -2,8 +2,9 @@ from model_utils import Choices
 
 
 NOTIFICATION_CATEGORY_CHOICES = Choices(
-    'out_of_band', 'OUT_OF_BAND', 'Out of band',
-    'reset_password', 'RESET_PASSWORD', 'Reset password',
+    ('answer_created', 'ANSWER_CREATED', 'Answer Created'),
+    ('out_of_band', 'OUT_OF_BAND', 'Out of band'),
+    ('reset_password', 'RESET_PASSWORD', 'Reset password'),
 )
 
 
