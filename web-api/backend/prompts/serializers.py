@@ -95,6 +95,7 @@ class PromptDetailSerializer(serializers.ModelSerializer):
     bounty = serializers.IntegerField()
     answers = AnswerListRetrieveSerializer(many=True)
     user = serializers.StringRelatedField()
+    watchers = PromptWatchSerializer(many=True)
 
     class Meta:
         depth = 1

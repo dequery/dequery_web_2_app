@@ -57,7 +57,7 @@ function PromptList() {
         {promptList.results.map((prompt, i) => {
           return (
             <Grid key={i} item xs={12}>
-              <PromptCard prompt={prompt} user={user} />
+              <PromptCard prompt={prompt} />
             </Grid>
           );
         })}

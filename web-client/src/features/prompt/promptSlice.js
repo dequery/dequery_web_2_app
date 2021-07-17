@@ -143,8 +143,13 @@ export const promptSlice = createSlice({
       })
       .addCase(addPromptWatcher.fulfilled, (state, action) => {
         state.isFetching = false;
-        const promptIndex = state.promptList.results.findIndex(prompt => prompt.pk === action.payload.prompt);
-        state.promptList.results[promptIndex].watchers.push(action.payload);
+        if (state.promptList.results.length > 0) {
+          const promptIndex = state.promptList.results.findIndex(prompt => prompt.pk === action.payload.prompt);
+          state.promptList.results[promptIndex].watchers.push(action.payload);
+        }
+        if (state.promptDetail.watchers) {
+          state.promptDetail.watchers.push(action.payload);
+        }
       })
       .addCase(addPromptWatcher.rejected, (state, action) => {
         state.isFetching = false;
@@ -156,9 +161,14 @@ export const promptSlice = createSlice({
       })
       .addCase(removePromptWatcher.fulfilled, (state, action) => {
         state.isFetching = false;
-        const promptIndex = state.promptList.results.findIndex(prompt => prompt.pk === action.payload.prompt);
-        const watchers = state.promptList.results[promptIndex].watchers;
-        state.promptList.results[promptIndex].watchers = watchers.filter(watcher => watcher.pk !== action.payload.pk);
+        if (state.promptList.results.length > 0) {
+          const promptIndex = state.promptList.results.findIndex(prompt => prompt.pk === action.payload.prompt);
+          const watchers = state.promptList.results[promptIndex].watchers;
+          state.promptList.results[promptIndex].watchers = watchers.filter(watcher => watcher.pk !== action.payload.pk);
+        }
+        if (state.promptDetail.watchers) {
+          state.promptDetail.watchers = state.promptDetail.watchers.filter(watcher => watcher.pk !== action.payload.pk);
+        }
       })
       .addCase(removePromptWatcher.rejected, (state, action) => {
         state.isFetching = false;

@@ -7,18 +7,19 @@ import { useParams } from 'react-router-dom';
 import { selectVoteCastCreated } from 'features/vote/voteSlice';
 import { clearPromptCreated, clearPromptDetail, retrievePrompt, selectIsFetching, selectPromptDetail } from 'features/prompt/promptSlice';
 
-import AnswerAccordion from 'features/prompt/components/AnswerAccordion';
-import AnswerCard from 'features/prompt/components/AnswerCard';
-import IncreaseBountyForm from 'features/prompt/components/IncreaseBountyForm';
-import PromptDetailContent from 'features/prompt/components/PromptDetailContent';
-import VoteBalanceDisplay from 'features/vote/components/VoteBalanceDisplay';
-
 import Container from '@material-ui/core/Container';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
+
+import AnswerAccordion from 'features/prompt/components/AnswerAccordion';
+import AnswerCard from 'features/prompt/components/AnswerCard';
+import IncreaseBountyForm from 'features/prompt/components/IncreaseBountyForm';
+import PromptDetailContent from 'features/prompt/components/PromptDetailContent';
+import VoteBalanceDisplay from 'features/vote/components/VoteBalanceDisplay';
+import WatcherButton from 'features/prompt/components/WatcherButton';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function PromptDetail(props) {
+function PromptDetail() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { promptPk } = useParams();
@@ -70,6 +71,7 @@ function PromptDetail(props) {
                 </Grid>
                 <Grid item style={{textAlign: 'right'}} xs={6}>
                   <VoteBalanceDisplay prompt={prompt} />
+                  <WatcherButton prompt={prompt} />
                 </Grid>
               </Grid>
               <IncreaseBountyForm prompt={prompt} />
