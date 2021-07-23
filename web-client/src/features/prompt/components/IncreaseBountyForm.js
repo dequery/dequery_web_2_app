@@ -6,11 +6,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectUser } from 'features/auth/authSlice';
 import { increasePromptBounty, selectIncreaseBountyRespError, selectIsFetching } from 'features/prompt/promptSlice';
 
-import TextInput from 'features/auth/components/TextInput';
-
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid'
+import Tooltip from '@material-ui/core/Tooltip';
+
+import TextInput from 'features/auth/components/TextInput';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -60,9 +61,11 @@ function IncreaseBountyForm(props) {
         </Grid>
 
         <Grid item className={classes.centeredGrid} xs={6} sm={3}>
-          <Button disabled={disabled} variant="contained" color="primary" type="submit">
-              Add Bounty
-          </Button>
+          <Tooltip title="Adding to this bounty will give you an equal amount of upvotes to use on answers to this question.">
+            <Button disabled={disabled} variant="contained" color="primary" type="submit">
+                Add Bounty
+            </Button>
+          </Tooltip>
         </Grid>
 
         <Grid item className={classes.centeredGrid} xs={4}>

@@ -43,6 +43,7 @@ class PromptWatchCreateSerializer(serializers.ModelSerializer):
         del data['request_user']
         return data
 
+
 class PromptCreateSerializer(serializers.ModelSerializer):
     bounty = serializers.IntegerField()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -111,5 +112,5 @@ class PromptListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user', 'watchers']
-        read_only_fields = ['askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user', 'watchers']
+        fields = ['answer_count', 'askers_cut', 'bounty', 'created', 'expiration_datetime', 'hidden_code', 'pk', 'status', 'title', 'user', 'watchers']
+        read_only_fields = ['answer_count', 'askers_cut', 'bounty', 'created', 'expiration_datetime', 'pk', 'status', 'title', 'user', 'watchers']

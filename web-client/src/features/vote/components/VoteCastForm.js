@@ -10,7 +10,8 @@ import TextInput from 'features/auth/components/TextInput';
 
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid'
+import Grid from '@material-ui/core/Grid';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -62,9 +63,11 @@ function VoteCastForm(props) {
         </Grid>
 
         <Grid item className={classes.centeredGrid} xs={6} sm={3}>
-          <Button disabled={disabled} variant="contained" color="primary" type="submit">
-              Add Votes
-          </Button>
+          <Tooltip title="Increase the bounty of this question in order to get more vote tokens.">
+            <Button disabled={disabled} variant="contained" color="primary" type="submit">
+                Add Votes
+            </Button>
+          </Tooltip>
         </Grid>
 
         <Grid item className={classes.centeredGrid} xs={4}>

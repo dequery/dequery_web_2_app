@@ -48,11 +48,11 @@ function AnswerAccordion(props) {
         </AccordionSummary>
         <AccordionDetails>
           <Grid
-                alignItems="center"
-                container
-                direction="row"
-                justify="center"
-                spacing={3}
+            alignItems="center"
+            container
+            direction="row"
+            justify="center"
+            spacing={3}
           >
             <Grid item xs={12}>
               <AnswerEditor onEditorStateChange={setEditorState} editorState={editorState} />
@@ -63,7 +63,7 @@ function AnswerAccordion(props) {
                 onClick={onSubmitCreate}
                 variant="contained"
               >
-                  Submit
+                Submit
               </Button>
             </Grid>
           </Grid>
