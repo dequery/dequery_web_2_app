@@ -89,7 +89,7 @@ function About() {
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                Dequery uses its own token called DEQ to allow users to put bounties on their questions. Once the question expires, DEQ is paid to other users who provided answers. The amount of DEQ each user receives for their answer is based on the weighted number of votes their answer receives.</Typography>
+                Dequery uses its own token called DEQ to allow users to put bounties on their questions. Once the question expires, DEQ is paid to other users who provided answers. The amount of DEQ each user receives for their answer is based on the weighted number of votes their answer receives. A user can upvote answers to a bounty based on how much bounty the user contributed to the question. Users can increase the bounty of a question at any point before it expires.</Typography>
             </AccordionDetails>
           </Accordion>
 

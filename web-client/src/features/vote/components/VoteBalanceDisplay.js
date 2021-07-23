@@ -5,6 +5,7 @@ import { selectUser } from 'features/auth/authSlice';
 import { clearVoteBalanceList, listVoteBalances, selectVoteBalanceList, selectVoteCastCreated } from 'features/vote/voteSlice';
 
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 function VoteBalance(props) {

@@ -31,6 +31,10 @@ class Prompt(models.Model):
             prompt.distribute()
 
     @property
+    def answer_count(self):
+        return self.answers.all().count()
+
+    @property
     def askers_bounty(self):
         bounty = 0
         added_transactions = DeqTransaction.objects.filter(
