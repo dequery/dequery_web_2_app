@@ -70,6 +70,21 @@ function About() {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
+              <Typography className={classes.heading}>What is Dequery's mission?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>
+                Dequery believes that protocol value should accumulate towards the users of the platform not the platform itself. Current question and answer web apps (such as Quora) don't directly reward currency to users who create questions or answers that the community finds useful. Overtime this gives more power to the app to manipulate users instead of users manipulating the app. Dequery wants users to go down the rabbit hole of thinking together as uninhibited as possible by the platform used to communicate.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
               <Typography className={classes.heading}>How does Dequery work?</Typography>
             </AccordionSummary>
             <AccordionDetails>
