@@ -49,7 +49,7 @@ function About() {
         <Grid item xs={12}>
           <Card className={classes.heroCard}>
             <CardMedia
-              image={`${process.env.PUBLIC_URL}/unsplashed_hole.jpeg`}
+              image={`${process.env.PUBLIC_URL}/dequery_background.png`}
               style={{minHeight: '680px'}}
             />
             <CardContent>
