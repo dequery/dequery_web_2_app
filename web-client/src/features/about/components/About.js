@@ -74,7 +74,7 @@ function About() {
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
-                Dequery believes that protocol value should accumulate towards the users of the platform not the platform itself. Current question and answer web apps (such as Quora) don't directly reward currency to users who create questions or answers that the community finds useful. Overtime this gives more power to the app to manipulate users instead of users manipulating the app. Dequery wants users to go down the rabbit hole of thinking together as uninhibited as possible by the platform used to communicate.
+                Dequery's mission is to build a decentralized question and answer marketplace. Users putting bounties on question encourages increased thoughtfulness about the questions because the users are paying to ask. Additionally, the higher the bounty the more the asker can incentivize high quality answers. This is also not a zero sum game, as the platform grows and proves the value of providing insightful questions and answers the demand and therefore total value for the bounty currency called DEQ grows. Dequery's commitment to running on open state smart-contracts provides transparency and automates bureaucratic costs so that the platform can truly become a public good for going down the rabbit hole of questions with others. Dequery is a place to learn and earn.
               </Typography>
             </AccordionDetails>
           </Accordion>
