@@ -8,7 +8,7 @@ from backend.answers.views import AnswerCreate, AnswerDetail, AnswerList
 from backend.notifications.views import RequestResetPassword
 from backend.prompts.views import PromptCreate, PromptDetail, PromptList, PromptWatchCreate, PromptWatchDelete
 from backend.transactions.views import DeqTransactionCreate, DeqTransacionList
-from backend.users.views import AlphaRequestCreate, UserCreate, UserDetail, RetrieveUserFromToken, ResetPassword
+from backend.users.views import AlphaRequestCreate, UserCreate, UserUpdate, UserDetail, RetrieveUserFromToken, ResetPassword
 from backend.votes.views import VoteBalanceDetail, VoteBalanceList, VoteCastCreate
 
 
@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/transactions/create/', DeqTransactionCreate.as_view(), name='transaction_create'),
     path('api/users/create/', UserCreate.as_view(), name='user_create'),
     path('api/users/retrieve/', RetrieveUserFromToken.as_view(), name='user_retrieve_from_token'),
+    path('api/users/update/<int:pk>/', UserUpdate.as_view(), name='user_update'),
     path('api/users/reset-password/', ResetPassword.as_view(), name='user_reset_password'),
     path('api/users/<int:pk>/', UserDetail.as_view(), name='user_detail'),
     path('api/vote-casts/create/', VoteCastCreate.as_view(), name='vote_cast_create'),

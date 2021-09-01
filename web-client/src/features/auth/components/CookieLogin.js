@@ -1,16 +1,17 @@
 import Cookies from 'js-cookie';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { retrieveUser } from 'features/auth/authSlice';
+import { selectUser, retrieveUser } from 'features/auth/authSlice';
 
 
 function CookieLogin() {
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const accessToken = Cookies.get('accessToken');
   const refreshToken = Cookies.get('refreshToken');
 
-  if (accessToken && refreshToken) {
+  if (!user.pk && accessToken && refreshToken) {
     dispatch(retrieveUser());
   }
   return <div/>;

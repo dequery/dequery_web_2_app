@@ -3,7 +3,7 @@ boto3==1.17.75
 botocore==1.20.75
 celery==5.0.5
 cryptoaddress==0.2.1
-Django==3.1
+Django==3.1.12
 django-celery-beat==2.2.0
 django-celery-results==2.0.1
 django-cors-headers==3.7.0

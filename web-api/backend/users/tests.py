@@ -37,6 +37,12 @@ class DeqTransactionTests(TestCase):
             body['signup_code'] = signup_code
         response = client.post('/api/users/create/', body, format='json')
         return response
+    
+    def _api_update(self, user, update_data):
+        body = update_data
+        client.force_authenticate(user=user)
+        response = client.patch(f'/api/users/update/{user.pk}/', body, format='json')
+        return response
 
     def test_signup(self):
         # it works with valid signup code
@@ -83,6 +89,15 @@ class DeqTransactionTests(TestCase):
         self.assertEqual(400, response.status_code)
         self.assertEqual('Not a valid code', response.json()['non_field_errors'][0])
 
+        # it works without signup code
+        display_name_4 = 'user4'
+        email_4 = 'user4@hotmail.com'
+        response = self._api_signup(display_name_4, email_4, 'testpass123')
+        self.assertEqual(201, response.status_code)
+        user = User.objects.get(pk=response.json()['pk'])
+        self.assertEqual(display_name_4, user.display_name)
+        self.assertEqual(email_4, user.email)
+
     def test_login(self):
         display_name = 'vitalik'
         email = 'vitalik@eth.org'
@@ -100,3 +115,61 @@ class DeqTransactionTests(TestCase):
         response = self._api_refresh_token(refresh_token)
         self.assertEqual(200, response.status_code)
     
+    def test_update(self):
+        response = self._api_signup('witcher', 'witcher@wolf.com', 'testpass123')
+        self.assertEqual(201, response.status_code)
+        user = User.objects.get(pk=response.json()['pk'])
+
+        # it updates display_name
+        new_display_name = 'mutated'
+        response = self._api_update(user, {'display_name': new_display_name})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(new_display_name, response.json()['display_name'])
+
+        # it updates web_link
+        new_web_link = 'https://dequery.org/'
+        response = self._api_update(user, {'web_link': new_web_link})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(new_web_link, response.json()['web_link'])
+
+        # it fails if web_link is invalid
+        new_web_link = 'baloney'
+        response = self._api_update(user, {'web_link': new_web_link})
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('Enter a valid URL.', response.json()['web_link'][0])
+
+        # it updates eth_address
+        new_eth_address = '0x89205A3A3b2A69De6Dbf7f01ED13B2108B2c43e7'
+        response = self._api_update(user, {'eth_address': new_eth_address})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(new_eth_address, response.json()['eth_address'])
+
+        # it fails if eth_address is invalid
+        new_eth_address = '123'
+        response = self._api_update(user, {'eth_address': new_eth_address})
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('A valid eth address was not provided', response.json()['eth_address'][0])
+
+        # it updates email
+        new_email = 'mutated@eth.org'
+        response = self._api_update(user, {'email': new_email})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(new_email, response.json()['email'])
+
+        # it fails if email is invalid
+        new_email = '123'
+        response = self._api_update(user, {'email': new_email})
+        self.assertEqual(400, response.status_code)
+        self.assertEqual('Enter a valid email address.', response.json()['email'][0])
+
+        # it doesn't change read only pk
+        new_pk = '42'
+        response = self._api_update(user, {'pk': new_pk})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(user.pk, response.json()['pk'])
+
+        # it doesn't change read only deq_balance
+        new_deq_balance = '420'
+        response = self._api_update(user, {'deq_balance': new_deq_balance})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(user.deq_balance, response.json()['deq_balance'])
