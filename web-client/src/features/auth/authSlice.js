@@ -7,7 +7,9 @@ import dequeryClient from 'dequeryClient';
 const initialState = {
   alphaRequestSuccess: false,
   respError: {},
+  respErrorUpdateUser: {},
   isFetching: false,
+  isFetchingUpdateUser: false,
   user: {},
   userCreated: false,
   resetPasswordSuccess: false,
@@ -63,6 +65,17 @@ export const resetPassword = createAsyncThunk(
     { new_password: newPassword, reset_password_code: resetPasswordCode }
   )
 );
+
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async ({userPk, displayName, email, ethAddress, webLink}, thunkAPI) => dequeryClient(
+    `/api/users/update/${userPk}/`,
+    'PATCH',
+    thunkAPI,
+    { display_name: displayName, email, eth_address: ethAddress, web_link: webLink },
+    true,
+  )
+)
 
 export const retrieveUser = createAsyncThunk(
   'auth/retrieveUser',
@@ -142,6 +155,18 @@ export const authSlice = createSlice({
         state.isFetching = false;
         state.respError = action.payload;
       })
+      .addCase(updateUser.pending, (state) => {
+        state.isFetchingUpdateUser = true;
+        state.respErrorUpdateUser = initialState.respErrorUpdateUser;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.isFetchingUpdateUser = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isFetchingUpdateUser = false;
+        state.respErrorUpdateUser = JSON.parse(action.payload.detail);
+      })
       .addCase(forgotPassword.pending, (state) => {
         state.isFetching = true;
         state.respError = initialState.respError;
@@ -185,8 +210,10 @@ export const { logout, setPasswordMismatchError, setNewPasswordMismatchError } =
 
 export const selectAlphaRequestSuccess = (state) => state.auth.alphaRequestSuccess;
 export const selectIsFetching = (state) => state.auth.isFetching;
+export const selectIsFetchingUpdateUser = (state) => state.auth.isFetchingUpdateUser;
 export const selectUser = (state) => state.auth.user;
 export const selectUserCreated = (state) => state.auth.userCreated;
+export const selectRespErrorUpdateUser = (state) => state.auth.respErrorUpdateUser;
 export const selectRespError = (state) => state.auth.respError;
 export const selectResetPasswordSuccess = (state) => state.auth.resetPasswordSuccess
 export const selectForgotPasswordSuccess = (state) => state.auth.forgotPasswordSuccess

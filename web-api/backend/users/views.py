@@ -28,6 +28,14 @@ class UserDetail(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class UserUpdate(generics.UpdateAPIView):
+    serializer_class = UserDetailSerializer
+    permission_class = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.filter(pk=self.request.user.pk)
+
+
 class RetrieveUserFromToken(views.APIView):
     def get(self, request):
         user_serializer = UserDetailSerializer(request.user)

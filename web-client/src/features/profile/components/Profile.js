@@ -39,7 +39,7 @@ function Profile() {
       spacing={3}
     >
       <AuthRedirect />
-      <Grid className={classes.centeredGrid} item xs={12}>
+      <Grid className={classes.centeredGrid} item xs={12} sm={8}>
         <ProfileData />
       </Grid>
       <Grid className={classes.centeredGrid} item xs={12}>

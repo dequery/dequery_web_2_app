@@ -3,8 +3,11 @@ Custom Extended User model as recomended by the Django Docs
 
 https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#a-full-example
 """
+from cryptoaddress import EthereumAddress
 from django.db import models
 from django.contrib.auth.models import (BaseUserManager, AbstractBaseUser)
+from django.core.exceptions import ValidationError
+
 
 from backend.transactions.constants import SPENDING_CATEGORIES
 
@@ -34,6 +37,17 @@ class UserManager(BaseUserManager):
         return user
 
 
+def validate_eth_address(value):
+    if value == '':
+        return value
+
+    try:
+        EthereumAddress(value)
+    except:
+        raise ValidationError('A valid eth address was not provided')
+    return value
+
+
 class User(AbstractBaseUser):
     created = models.DateTimeField(auto_now_add=True)
     display_name = models.CharField(max_length=20, unique=True)
@@ -44,6 +58,8 @@ class User(AbstractBaseUser):
     )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    web_link = models.URLField(blank=True, default='', max_length=400)
+    eth_address = models.CharField(blank=True, default='', max_length=64, validators=[validate_eth_address])
 
     objects = UserManager()
 
